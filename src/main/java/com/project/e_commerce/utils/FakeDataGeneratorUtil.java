@@ -38,7 +38,8 @@ public class FakeDataGeneratorUtil {
                 .name(faker.commerce().productName())
                 .price(faker.number().numberBetween(10, 90_000_000))
                 .description(faker.lorem().sentence())
-                .categoryId((long) faker.number().numberBetween(1, 3))
+                .thumbnail("")
+                .categoryId((long) faker.number().numberBetween(1,6))
                 .quantity(faker.number().numberBetween(1, 1000))
                 .build();
     }
@@ -50,12 +51,7 @@ public class FakeDataGeneratorUtil {
                 .collect(Collectors.toList());
     }
 
-    // Generate a list of fake products
-//    public List<Product> generateFakeProducts(int count) {
-//        return IntStream.range(0, count)
-//                .mapToObj(i -> generateFakeProduct())
-//                .collect(Collectors.toList());
-//    }
+
 
     // More specialized fake data generation
     public String generateFakeProductBarcode() {

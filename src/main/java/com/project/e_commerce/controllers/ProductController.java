@@ -131,30 +131,30 @@ public class ProductController {
 
     }
 
-    @PostMapping("fake-data")
-    public ResponseEntity<String> fakeData() {
-        Faker faker = new Faker();
-        for(int i =0;i<1000000;i++){
-            String productName = faker.commerce().productName();
-            if(productService.exitsByName(productName)){
-                continue;
-            }
-            ProductDTO productDTO=ProductDTO
-
-                    .builder()
-                    .name(productName)
-                    .price(faker.number().numberBetween(10,90_000_000))
-                    .description(faker.lorem().sentence())
-                    .categoryId((long)faker.number().numberBetween(1,3))
-                    .quantity(faker.number().numberBetween(1,1000))
-
-                    .build();
-            try {
-                productService.createProduct(productDTO);
-            }catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-            }
-        }
-        return ResponseEntity.status(HttpStatus.OK).body("Products created successfully");
-    }
+//    @PostMapping("fake-data")
+//    public ResponseEntity<String> fakeData() {
+//        Faker faker = new Faker();
+//        for(int i =0;i<1000000;i++){
+//            String productName = faker.commerce().productName();
+//            if(productService.exitsByName(productName)){
+//                continue;
+//            }
+//            ProductDTO productDTO=ProductDTO
+//
+//                    .builder()
+//                    .name(productName)
+//                    .price(faker.number().numberBetween(10,90_000_000))
+//                    .description(faker.lorem().sentence())
+//                    .categoryId((long)faker.number().numberBetween(1,3))
+//                    .quantity(faker.number().numberBetween(1,1000))
+//
+//                    .build();
+//            try {
+//                productService.createProduct(productDTO);
+//            }catch (Exception e) {
+//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+//            }
+//        }
+//        return ResponseEntity.status(HttpStatus.OK).body("Products created successfully");
+//    }
 }

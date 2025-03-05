@@ -1,8 +1,6 @@
 package com.project.e_commerce.controllers;
 
 
-import com.project.e_commerce.responses.ProductListResponse;
-import com.project.e_commerce.responses.ProductResponse;
 import com.project.e_commerce.services.FakeDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +19,7 @@ public class FakeDataController {
     }
 
 
-    @PostMapping("products")
+//    @PostMapping("products")
     public ResponseEntity<String> getProducts(@RequestParam(defaultValue = "10") int count) {
         return fakeDataService.generateAndSaveFakeProducts(count);
     }
