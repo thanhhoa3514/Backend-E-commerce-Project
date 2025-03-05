@@ -6,6 +6,7 @@ import com.project.e_commerce.dtos.ProductDTO;
 import com.project.e_commerce.dtos.ProductImageDTO;
 import com.project.e_commerce.models.Product;
 import com.project.e_commerce.models.ProductImage;
+import com.project.e_commerce.responses.ProductListResponse;
 import com.project.e_commerce.responses.ProductResponse;
 import com.project.e_commerce.services.ProductImageService;
 import com.project.e_commerce.services.ProductService;
@@ -47,15 +48,19 @@ public class ProductController {
 
 
     @GetMapping()
-    public ResponseEntity<List<ProductResponse>> getAllProducts(
+    public ResponseEntity<ProductListResponse> getAllProducts(
             @RequestParam("page") int page
             , @RequestParam("limit") int limit) {
 
         PageRequest pageRequest= PageRequest.of(page, limit, Sort.by("createdAt").descending());
         Page<ProductResponse> productPage=productService.getAllProducts(pageRequest);
         int totalPages=productPage.getTotalPages();
-        List<ProductResponse> productList=productPage.getContent();
-        return ResponseEntity.ok(productList);
+        List<ProductResponse> productResponseLists=productPage.getContent();
+        return ResponseEntity.ok(ProductListResponse.
+                builder()
+                        .productResponsesList(productResponseLists)
+                        .totalPages(totalPages)
+                .build());
     }
 
 

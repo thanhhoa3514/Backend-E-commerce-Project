@@ -9,6 +9,6 @@ import java.util.List;
 @Builder
 public class ProductListResponse {
 
-    private List<ProductResponse> productResponsesList;
+    private List<ProductResponse> productList;
     private int totalPages;
 }
