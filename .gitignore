@@ -46,3 +46,5 @@ mvnw
 mvnw.cmd
 
 *.class
+
+uploads/
