@@ -26,17 +26,12 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
+
+
 import java.util.List;
-import java.util.UUID;
+
 
 @RestController
 @RequestMapping("${api.prefix}/products")
@@ -66,9 +61,15 @@ public class ProductController {
 
 
     @GetMapping("{id}")
-    public ResponseEntity<String> getProductById(@PathVariable("id") String id) {
+    public ResponseEntity<?> getProductById(@PathVariable("id") Long id) {
 
-        return ResponseEntity.ok("Product found"+id);
+        try {
+
+            Product product=productService.getProductById(id);
+            return ResponseEntity.ok(ProductResponse.from(product));
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
     }
 
@@ -125,36 +126,27 @@ public class ProductController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteProductById(@PathVariable("id") String id) {
+    public ResponseEntity<String> deleteProductById(@PathVariable("id") Long id) {
 
-        return ResponseEntity.status(HttpStatus.OK).body("Product deleted"+id);
+        try {
+            productService.deleteProduct(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Product deleted"+id);
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
 
     }
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateProductByIdProduct(
+            @PathVariable("id") Long id,
+            @RequestBody ProductDTO productDTO) {
+        try {
+            Product updatedProduct=productService.updateProduct(id, productDTO);
+            return ResponseEntity.ok(ProductResponse.from(updatedProduct));
+        }catch (Exception ex){
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
 
-//    @PostMapping("fake-data")
-//    public ResponseEntity<String> fakeData() {
-//        Faker faker = new Faker();
-//        for(int i =0;i<1000000;i++){
-//            String productName = faker.commerce().productName();
-//            if(productService.exitsByName(productName)){
-//                continue;
-//            }
-//            ProductDTO productDTO=ProductDTO
-//
-//                    .builder()
-//                    .name(productName)
-//                    .price(faker.number().numberBetween(10,90_000_000))
-//                    .description(faker.lorem().sentence())
-//                    .categoryId((long)faker.number().numberBetween(1,3))
-//                    .quantity(faker.number().numberBetween(1,1000))
-//
-//                    .build();
-//            try {
-//                productService.createProduct(productDTO);
-//            }catch (Exception e) {
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-//            }
-//        }
-//        return ResponseEntity.status(HttpStatus.OK).body("Products created successfully");
-//    }
+
 }

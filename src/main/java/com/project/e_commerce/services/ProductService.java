@@ -68,26 +68,9 @@ public class ProductService implements IProductService {
     @Override
     public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
 
-        return productRepository.findAll(pageRequest)
-                .map(product -> {
-                    ProductResponse productResponse = ProductResponse
-                            .builder()
-                            .name(product.getName())
-                            .description(product.getDescription())
-                            .price(product.getPrice())
-                            .quantity(product.getQuantity())
-                            .thumbnail(product.getThumbnail())
-                            .categoryId(product.getCategoryId().getId())
-                            .build();
-
-
-
-                            productResponse.setCreated_at(product.getCreatedAt());
-                            productResponse.setUpdated_at(product.getUpdatedAt());
-                    return productResponse;
-
-                }
-                );
+        return productRepository
+                .findAll(pageRequest)
+                .map(ProductResponse::from);
     }
 
     @Override
@@ -95,30 +78,35 @@ public class ProductService implements IProductService {
 
         Product existingProduct=getProductById(idProduct);
 
-        if(existingProduct!=null) {
-            Category existingCategory=categoryRepository.findById(productDTO
-                            .getCategoryId())
-                    .orElseThrow(() ->new
-                            DataNotFoundException("Cannot find category with id: " + productDTO.getCategoryId()));
+        if (existingProduct == null) {
+            throw new DataNotFoundException("Cannot find product with id: " + idProduct);
+        }
+        if (productDTO.getCategoryId() != null) {
+            Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
+                    .orElseThrow(() ->
+                            new DataNotFoundException("Cannot find category with id: " +
+                                    productDTO.getCategoryId()));
+            existingProduct.setCategoryId(existingCategory);
+        }
 
-            existingProduct.setName(productDTO.getName());
-
-            existingProduct.setDescription(productDTO.getDescription());
-
-            existingProduct.setPrice(productDTO.getPrice());
-
-            existingProduct.setQuantity(productDTO.getQuantity());
-
-            existingProduct.setThumbnail(productDTO.getThumbnail());
-
-//            existingProduct.setCategoryId(existingCategory);
+            if (productDTO.getName() != null) {
+                existingProduct.setName(productDTO.getName());
+            }
+            if (productDTO.getDescription() != null) {
+                existingProduct.setDescription(productDTO.getDescription());
+            }
+            if (productDTO.getPrice() > 0 && productDTO.getPrice() < 1000000) {
+                existingProduct.setPrice(productDTO.getPrice());
+            }
+            if (productDTO.getQuantity()>0) {
+                existingProduct.setQuantity(productDTO.getQuantity());
+            }
+            if (productDTO.getThumbnail() != null) {
+                existingProduct.setThumbnail(productDTO.getThumbnail());
+            }
 
             return productRepository.save(existingProduct);
 
-        }else{
-
-            throw new DataNotFoundException("Cannot find product with id: " + idProduct);
-        }
     }
 
     @Override
