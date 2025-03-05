@@ -69,8 +69,8 @@ public class ProductService implements IProductService {
     public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
 
         return productRepository.findAll(pageRequest)
-                .map(product ->
-                    ProductResponse
+                .map(product -> {
+                    ProductResponse productResponse = ProductResponse
                             .builder()
                             .name(product.getName())
                             .description(product.getDescription())
@@ -78,7 +78,15 @@ public class ProductService implements IProductService {
                             .quantity(product.getQuantity())
                             .thumbnail(product.getThumbnail())
                             .categoryId(product.getCategoryId().getId())
-                            .build()
+                            .build();
+
+
+
+                            productResponse.setCreated_at(product.getCreatedAt());
+                            productResponse.setUpdated_at(product.getUpdatedAt());
+                    return productResponse;
+
+                }
                 );
     }
 

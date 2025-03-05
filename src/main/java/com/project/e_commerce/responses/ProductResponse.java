@@ -1,11 +1,14 @@
 package com.project.e_commerce.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-
+import lombok.*;
 
 
 @Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductResponse extends BaseResponse{
 
     private String name;
