@@ -1,5 +1,7 @@
 package com.project.e_commerce.models;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum OrderStatus {
     PENDING("Pending"),
     PROCESSING("Processing"),
@@ -13,6 +15,7 @@ public enum OrderStatus {
         this.status = status;
     }
 
+    @JsonValue
     public String getStatus() {
         return status;
     }
