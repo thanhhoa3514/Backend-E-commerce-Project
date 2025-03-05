@@ -1,6 +1,7 @@
 package com.project.e_commerce.controllers;
 
 import ch.qos.logback.core.util.StringUtil;
+import com.github.javafaker.Faker;
 import com.project.e_commerce.dtos.ProductDTO;
 
 import com.project.e_commerce.dtos.ProductImageDTO;
@@ -58,7 +59,7 @@ public class ProductController {
         List<ProductResponse> productResponseLists=productPage.getContent();
         return ResponseEntity.ok(ProductListResponse.
                 builder()
-                        .productResponsesList(productResponseLists)
+                        .productList(productResponseLists)
                         .totalPages(totalPages)
                 .build());
     }
@@ -128,5 +129,32 @@ public class ProductController {
 
         return ResponseEntity.status(HttpStatus.OK).body("Product deleted"+id);
 
+    }
+
+    @PostMapping("fake-data")
+    public ResponseEntity<String> fakeData() {
+        Faker faker = new Faker();
+        for(int i =0;i<1000000;i++){
+            String productName = faker.commerce().productName();
+            if(productService.exitsByName(productName)){
+                continue;
+            }
+            ProductDTO productDTO=ProductDTO
+
+                    .builder()
+                    .name(productName)
+                    .price(faker.number().numberBetween(10,90_000_000))
+                    .description(faker.lorem().sentence())
+                    .categoryId((long)faker.number().numberBetween(1,3))
+                    .quantity(faker.number().numberBetween(1,1000))
+
+                    .build();
+            try {
+                productService.createProduct(productDTO);
+            }catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Products created successfully");
     }
 }
