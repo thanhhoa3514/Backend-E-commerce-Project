@@ -39,6 +39,7 @@ public class UserService implements IUserService{
                 .password(userDTO.getPassword())
                 .isActive(true)
                 .address(userDTO.getAddress())
+                .email(userDTO.getEmail())
                 .dateOfBirth(userDTO.getDateOfBirth())
                 .facebookAccountId(userDTO.getFacebookAccountId())
                 .googleAccountId(userDTO.getGoogleAccountId())

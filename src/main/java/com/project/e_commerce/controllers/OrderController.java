@@ -1,6 +1,7 @@
 package com.project.e_commerce.controllers;
 
 import com.project.e_commerce.dtos.OrderDTO;
+import com.project.e_commerce.responses.OrderResponse;
 import com.project.e_commerce.services.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +29,10 @@ public class OrderController {
                 return ResponseEntity.badRequest().body(errorMessages);
             }
 
-            return ResponseEntity.ok().body("Order is created successfully");
+            OrderResponse orderResponse=orderService.createOrder(orderDTO);
+            return ResponseEntity.ok().body(orderResponse);
         }catch (Exception e) {
-//            e.printStackTrace();
+
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 

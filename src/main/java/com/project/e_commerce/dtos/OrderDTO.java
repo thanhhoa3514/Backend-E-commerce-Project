@@ -28,7 +28,7 @@ public class OrderDTO {
 
     private String address;
 
-    private String note;
+    private String notes;
 
     @JsonProperty("total_price")
     @Min(value = 1,message = "Total money must be greater than zero")

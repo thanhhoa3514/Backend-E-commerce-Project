@@ -58,7 +58,7 @@ public class OrderResponse extends BaseResponse{
 
 
     @JsonProperty("payment_method")
-    private LocalDateTime paymentMethod;
+    private String paymentMethod;
 
     @JsonProperty("active")
     private boolean active;

@@ -40,13 +40,13 @@ public class OrderService implements  IOrderService{
         order.setOrderStatus(OrderStatus.PENDING);
 
 
-        if (orderDTO.getShippingDate() == null) {
-            throw new DataNotFoundException("Shipping Date cannot be null");
-        } else if (orderDTO.getShippingDate().isBefore(LocalDateTime.now())) {
+        LocalDateTime shippingDate = (orderDTO.getShippingDate() != null)? orderDTO.getShippingDate() : LocalDateTime.now();
+        if (orderDTO.getShippingDate() != null &&orderDTO.getShippingDate().isBefore(LocalDateTime.now())) {
             throw new DataNotFoundException("Shipping Date must be after the current date");
         }
         order.setActive(true);
-        order.setShippingDate(orderDTO.getShippingDate());
+        order.setShippingDate(shippingDate);
+
         Order savedOrder = orderRepository.save(order);
 
         return modelMapper.map(savedOrder, OrderResponse.class);
