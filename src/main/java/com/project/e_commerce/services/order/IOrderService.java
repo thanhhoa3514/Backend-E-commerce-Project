@@ -10,7 +10,7 @@ import java.util.List;
 public interface IOrderService {
     OrderResponse createOrder(OrderDTO orderDTO);
     OrderResponse getOrderById(long orderId);
-    List<OrderResponse> getAllOrders();
+    List<OrderResponse> getAllOrdersByUserId(long userId);
     OrderResponse updateOrder(long orderId,OrderDTO orderDTO);
     void deleteOrder(long orderId);
 }

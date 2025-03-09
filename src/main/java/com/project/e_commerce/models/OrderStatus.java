@@ -24,4 +24,12 @@ public enum OrderStatus {
     public String toString() {
         return status;
     }
+    public static OrderStatus fromString(String text) {
+        for (OrderStatus status : OrderStatus.values()) {
+            if (status.getStatus().equalsIgnoreCase(text.trim())) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("No matching OrderStatus for: " + text);
+    }
 }
