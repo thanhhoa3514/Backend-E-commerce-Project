@@ -48,6 +48,12 @@ public class OrderService implements  IOrderService{
         order.setShippingDate(shippingDate);
 
         Order savedOrder = orderRepository.save(order);
+        modelMapper.typeMap(Order.class, OrderResponse.class)
+                .addMappings(mapper -> {
+                    // No need to skip ID for Order->OrderResponse mapping since we want the ID in the response
+                    mapper.map(Order::getCreatedAt, OrderResponse::setCreated_at);
+                    mapper.map(Order::getUpdatedAt, OrderResponse::setUpdated_at);
+                });
 
         return modelMapper.map(savedOrder, OrderResponse.class);
     }

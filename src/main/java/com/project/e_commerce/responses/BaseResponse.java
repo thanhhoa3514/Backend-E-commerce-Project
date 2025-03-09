@@ -17,11 +17,13 @@ import java.time.LocalDateTime;
 
 @Data
 @MappedSuperclass
-public class BaseResponse {
+public abstract class BaseResponse {
+//    @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty("created_at")
     private LocalDateTime created_at;
 
+//    @UpdateTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty("updated_at")
     private LocalDateTime updated_at;
