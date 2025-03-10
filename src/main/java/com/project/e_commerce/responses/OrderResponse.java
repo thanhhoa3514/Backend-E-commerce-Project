@@ -67,6 +67,9 @@ public class OrderResponse{
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
+    @JsonProperty("updated_at")
+    private LocalDateTime updatedAt;
+
     public static OrderResponse from(Order order) {
         return OrderResponse.builder()
                 .id(order.getId())

@@ -30,10 +30,10 @@ public class OrderService implements  IOrderService{
     private final ModelMapper  modelMapper;
     @Override
     public OrderResponse createOrder(OrderDTO orderDTO) {
-        User user=userRepository
+        User user = userRepository
                 .findById(orderDTO.getUserId())
-                .orElseThrow(()->new DataNotFoundException("User Not Found with this id "+
-                        orderDTO.getUserId()) );
+                .orElseThrow(() -> new DataNotFoundException("User Not Found with this id " +
+                        orderDTO.getUserId()));
 
         modelMapper.typeMap(OrderDTO.class, Order.class)
                 .addMappings(mapper -> mapper.skip(Order::setId));
@@ -43,13 +43,19 @@ public class OrderService implements  IOrderService{
         order.setOrderDate(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.PENDING);
 
-
-        LocalDateTime shippingDate = (orderDTO.getShippingDate() != null)? orderDTO.getShippingDate() : LocalDateTime.now();
-        if (orderDTO.getShippingDate() != null &&orderDTO.getShippingDate().isBefore(LocalDateTime.now())) {
-            throw new DataNotFoundException("Shipping Date must be after the current date");
+        // Xử lý shipping date
+        LocalDateTime shippingDateTime;
+        if (orderDTO.getShippingDate() != null) {
+            shippingDateTime = orderDTO.getShippingDate().atStartOfDay(); // Chuyển LocalDate sang LocalDateTime
+            if (shippingDateTime.isBefore(LocalDateTime.now())) {
+                throw new DataNotFoundException("Shipping Date must be after the current date");
+            }
+        } else {
+            shippingDateTime = LocalDateTime.now();
         }
+        
         order.setActive(true);
-        order.setShippingDate(shippingDate);
+        order.setShippingDate(shippingDateTime);
 
         Order savedOrder = orderRepository.save(order);
         modelMapper.typeMap(Order.class, OrderResponse.class)
@@ -57,6 +63,7 @@ public class OrderService implements  IOrderService{
                 mapper.map(src -> src.getUser().getId(), OrderResponse::setUserId);
                 mapper.map(src -> src.getUser().getFullName(), OrderResponse::setUserName);
                 mapper.map(Order::getCreatedAt, OrderResponse::setCreatedAt);
+                mapper.map(Order::getUpdatedAt, OrderResponse::setUpdatedAt);
             });
 
         return modelMapper.map(savedOrder, OrderResponse.class);
@@ -102,6 +109,7 @@ public class OrderService implements  IOrderService{
                     .totalPrice(order.getTotalPrice())
                     .orderStatus(order.getOrderStatus())
                     .createdAt(order.getCreatedAt())
+                    .updatedAt(order.getUpdatedAt()) 
                     .build())
             .collect(Collectors.toList());
     }
@@ -126,7 +134,13 @@ public class OrderService implements  IOrderService{
         existingOrder.setShippingAddress(orderDTO.getShippingAddress());
         existingOrder.setPaymentMethod(orderDTO.getPaymentMethod());
         existingOrder.setTotalPrice(orderDTO.getTotalPrice());
-        existingOrder.setShippingDate(orderDTO.getShippingDate());
+        if (orderDTO.getShippingDate() != null) {
+            LocalDateTime shippingDateTime = orderDTO.getShippingDate().atStartOfDay();
+            if (shippingDateTime.isBefore(LocalDateTime.now())) {
+                throw new DataNotFoundException("Shipping Date must be after the current date");
+            }
+            existingOrder.setShippingDate(shippingDateTime);
+        }
 
         Order updatedOrder = orderRepository.save(existingOrder);
         return modelMapper.map(updatedOrder, OrderResponse.class);
@@ -154,10 +168,11 @@ public class OrderService implements  IOrderService{
         if (orderDTO.getPaymentMethod() != null) existingOrder.setPaymentMethod(orderDTO.getPaymentMethod());
         if (orderDTO.getTotalPrice() != null) existingOrder.setTotalPrice(orderDTO.getTotalPrice());
         if (orderDTO.getShippingDate() != null) {
-            if (orderDTO.getShippingDate().isBefore(LocalDateTime.now())) {
+            LocalDateTime shippingDateTime = orderDTO.getShippingDate().atStartOfDay();
+            if (shippingDateTime.isBefore(LocalDateTime.now())) {
                 throw new DataNotFoundException("Shipping Date must be after the current date");
             }
-            existingOrder.setShippingDate(orderDTO.getShippingDate());
+            existingOrder.setShippingDate(shippingDateTime);
         }
 
         Order updatedOrder = orderRepository.save(existingOrder);
