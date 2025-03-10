@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderResponse extends BaseResponse{
-
+public class OrderResponse{
     private Long id;
-
 
     @JsonProperty("user_id")
     private Long userId;
 
+    @JsonProperty("user_name")
+    private String userName;  // Chỉ trả về tên người dùng
 
     @JsonProperty("fullname")
     private String fullName;
@@ -34,7 +34,6 @@ public class OrderResponse extends BaseResponse{
     @JsonProperty("phone_number")
     private String phoneNumber;
 
-
     @JsonProperty("address")
     private String address;
 
@@ -43,7 +42,6 @@ public class OrderResponse extends BaseResponse{
 
     @JsonProperty("order_date")
     private LocalDateTime orderDate;
-
 
     @JsonProperty("shipping_method")
     private String shippingMethod;
@@ -57,24 +55,23 @@ public class OrderResponse extends BaseResponse{
     @JsonProperty("shipping_date")
     private LocalDateTime shippingDate;
 
-
     @JsonProperty("payment_method")
     private String paymentMethod;
-
-    @JsonProperty("active")
-    private boolean active;
 
     @JsonProperty("total_price")
     private Double totalPrice;
 
-    @Enumerated(EnumType.STRING)
     @JsonProperty("status")
     private OrderStatus orderStatus;
+
+    @JsonProperty("created_at")
+    private LocalDateTime createdAt;
+
     public static OrderResponse from(Order order) {
-        OrderResponse orderResponse = OrderResponse
-                .builder()
+        return OrderResponse.builder()
                 .id(order.getId())
-                .userId(order.getUser().getId()) // Giả sử Order có quan hệ với User
+                .userId(order.getUser().getId())
+                .userName(order.getUser().getFullName())  // Chỉ lấy tên user
                 .fullName(order.getFullname())
                 .email(order.getEmail())
                 .phoneNumber(order.getPhoneNumber())
@@ -86,16 +83,10 @@ public class OrderResponse extends BaseResponse{
                 .trackingNumber(order.getTrackingNumber())
                 .shippingDate(order.getShippingDate())
                 .paymentMethod(order.getPaymentMethod())
-                .active(order.isActive())
                 .totalPrice(order.getTotalPrice())
                 .orderStatus(order.getOrderStatus())
+                .createdAt(order.getCreatedAt())
                 .build();
-
-        // Ánh xạ các trường thời gian
-        orderResponse.setCreated_at(order.getCreatedAt());
-        orderResponse.setUpdated_at(order.getUpdatedAt());
-
-        return orderResponse;
     }
 
 }

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public enum OrderStatus {
     PENDING("PENDING"),
@@ -26,16 +24,17 @@ public enum OrderStatus {
     }
     
     // Sửa lại phương thức convertStringToEnum
-    public static Optional<OrderStatus> convertStringToEnum(String enumString) {
+    public static OrderStatus convertStringToEnum(String enumString) {
         if (enumString == null || enumString.trim().isEmpty()) {
-            return Optional.empty();
+            return OrderStatus.PENDING;
         }
-
+    
         String normalizedInput = enumString.trim().toUpperCase();
         return Arrays.stream(OrderStatus.values())
                 .filter(status -> status.name().equals(normalizedInput) 
                         || status.getStatus().equals(normalizedInput))
-                .findFirst();
+                .findFirst()
+                .orElse(OrderStatus.PENDING);
     }
     public static OrderStatus fromString(String text) {
         for (OrderStatus status : OrderStatus.values()) {
@@ -45,17 +44,5 @@ public enum OrderStatus {
         }
         throw new IllegalArgumentException("No matching OrderStatus for: " + text);
     }
-    // public static Optional<OrderStatus> convertStringToEnum(String enumString) {
-    //     if (enumString == null || enumString.trim().isEmpty()) {
-    //         return Optional.empty();
-    //     }
 
-    //     for (OrderStatus status : OrderStatus.values()) {
-    //         if (status.name().equalsIgnoreCase(enumString.trim())) {
-    //             return Optional.of(status);
-    //         }
-    //     }
-
-    //     return Optional.empty();
-    // }
 }

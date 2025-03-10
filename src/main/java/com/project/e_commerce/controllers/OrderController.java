@@ -1,6 +1,7 @@
 package com.project.e_commerce.controllers;
 
 import com.project.e_commerce.dtos.OrderDTO;
+import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Order;
 import com.project.e_commerce.responses.OrderResponse;
 import com.project.e_commerce.services.order.OrderService;
@@ -43,7 +44,7 @@ public class OrderController {
     //GET http://localhost:3000/api/v1/orders/4
     public ResponseEntity<?> getOrderByUserId(@Valid @PathVariable("user_id") Long userId) {
         try {
-            List<Order> responseList=orderService.getAllOrdersByUserId(userId);
+            List<OrderResponse> responseList=orderService.getAllOrdersByUserId(userId);
             return ResponseEntity.ok().body(responseList);
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -54,7 +55,7 @@ public class OrderController {
     //GET http://localhost:3000/api/v1/orders/4
     public ResponseEntity<?> getOrderByOrderId(@Valid @PathVariable("id") Long orderId) {
         try {
-            Order orderResponse=orderService.getOrderById(orderId);
+            OrderResponse orderResponse=orderService.getOrderById(orderId);
             return ResponseEntity.ok().body(orderResponse);
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -67,7 +68,8 @@ public class OrderController {
                                                             @RequestBody OrderDTO orderDTO,
                                                         @Valid @PathVariable Long id) {
         try {
-            return ResponseEntity.ok().body(orderDTO);
+            OrderResponse updatedOrder = orderService.updateOrder(id, orderDTO);
+            return ResponseEntity.ok().body(updatedOrder);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -76,9 +78,28 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrderByIdOfThisOrder(@Valid @PathVariable("id") Long id) {
         try {
-            return ResponseEntity.ok().body("Order deleted");
-        }catch (Exception e) {
+            orderService.deleteOrder(id);
+            return ResponseEntity.ok().body("Order deleted successfully");
+        }catch (DataNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error deleting order: " + e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> updateOrderStatus(
+            @PathVariable("id") Long id,
+            @RequestParam String status) {
+        try {
+            orderService.updateOrderStatus(id, status);
+            return ResponseEntity.ok().body("Order status updated successfully");
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid status: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating order status: " + e.getMessage());
         }
     }
 
