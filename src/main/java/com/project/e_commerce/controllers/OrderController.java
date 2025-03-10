@@ -43,7 +43,7 @@ public class OrderController {
     //GET http://localhost:3000/api/v1/orders/4
     public ResponseEntity<?> getOrderByUserId(@Valid @PathVariable("user_id") Long userId) {
         try {
-            List<OrderResponse> responseList=orderService.getAllOrdersByUserId(userId);
+            List<Order> responseList=orderService.getAllOrdersByUserId(userId);
             return ResponseEntity.ok().body(responseList);
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -54,7 +54,7 @@ public class OrderController {
     //GET http://localhost:3000/api/v1/orders/4
     public ResponseEntity<?> getOrderByOrderId(@Valid @PathVariable("id") Long orderId) {
         try {
-            OrderResponse orderResponse=orderService.getOrderById(orderId);
+            Order orderResponse=orderService.getOrderById(orderId);
             return ResponseEntity.ok().body(orderResponse);
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

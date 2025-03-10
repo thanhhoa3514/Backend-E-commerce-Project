@@ -2,6 +2,7 @@ package com.project.e_commerce.responses;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.e_commerce.models.Order;
 import com.project.e_commerce.models.OrderStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
@@ -69,5 +70,32 @@ public class OrderResponse extends BaseResponse{
     @Enumerated(EnumType.STRING)
     @JsonProperty("status")
     private OrderStatus orderStatus;
+    public static OrderResponse from(Order order) {
+        OrderResponse orderResponse = OrderResponse
+                .builder()
+                .id(order.getId())
+                .userId(order.getUser().getId()) // Giả sử Order có quan hệ với User
+                .fullName(order.getFullname())
+                .email(order.getEmail())
+                .phoneNumber(order.getPhoneNumber())
+                .address(order.getAddress())
+                .notes(order.getNotes())
+                .orderDate(order.getOrderDate())
+                .shippingMethod(order.getShippingMethod())
+                .shippingAddress(order.getShippingAddress())
+                .trackingNumber(order.getTrackingNumber())
+                .shippingDate(order.getShippingDate())
+                .paymentMethod(order.getPaymentMethod())
+                .active(order.isActive())
+                .totalPrice(order.getTotalPrice())
+                .orderStatus(order.getOrderStatus())
+                .build();
+
+        // Ánh xạ các trường thời gian
+        orderResponse.setCreated_at(order.getCreatedAt());
+        orderResponse.setUpdated_at(order.getUpdatedAt());
+
+        return orderResponse;
+    }
 
 }

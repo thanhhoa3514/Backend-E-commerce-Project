@@ -65,5 +65,6 @@ public class Order extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
+    @Convert(converter = OrderStatusConverter.class)
     private OrderStatus orderStatus;
 }

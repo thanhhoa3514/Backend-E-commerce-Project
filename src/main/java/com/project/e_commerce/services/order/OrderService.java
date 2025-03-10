@@ -15,7 +15,10 @@ import org.modelmapper.ModelMapper;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.project.e_commerce.models.OrderStatus.convertStringToEnum;
 
 
 @Service
@@ -60,51 +63,19 @@ public class OrderService implements  IOrderService{
     }
 
     @Override
-    public OrderResponse getOrderById(long orderId) {
+    public Order getOrderById(long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new DataNotFoundException("Order Not Found with this id " + orderId));
-
-        if (order.getOrderStatus() == null) {
-            throw new IllegalStateException("OrderStatus is null for order id " + orderId);
-        }
-
-        System.out.println("Order Status in DB: " + order.getOrderStatus());
-
-        // Configure mapping for timestamps
-        modelMapper.typeMap(Order.class, OrderResponse.class)
-                .addMappings(mapper -> {
-                    mapper.map(Order::getCreatedAt, OrderResponse::setCreated_at);
-                    mapper.map(Order::getUpdatedAt, OrderResponse::setUpdated_at);
-                });
-
-        return modelMapper.map(order, OrderResponse.class);
-//        modelMapper.typeMap(Order.class, OrderResponse.class)
-//                .addMappings(mapper -> {
-//                    mapper.map(Order::getCreatedAt, OrderResponse::setCreated_at);
-//                    mapper.map(Order::getUpdatedAt, OrderResponse::setUpdated_at);
-//                });
-//        OrderStatus status = OrderStatus.fromString("Pending");
-//        return modelMapper.map(order, OrderResponse.class);
+            .orElseThrow(() -> new DataNotFoundException("Order Not Found with this id " + orderId));
+        return order; 
     }
 
     @Override
-    public List<OrderResponse> getAllOrdersByUserId(long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new DataNotFoundException("User Not Found with this id " + userId));
-
-        List<Order> orders = orderRepository.findByUserId(userId);
-        modelMapper.typeMap(Order.class, OrderResponse.class)
-                .addMappings(mapper -> {
-                    mapper.map(Order::getCreatedAt, OrderResponse::setCreated_at);
-                    mapper.map(Order::getUpdatedAt, OrderResponse::setUpdated_at);
-                });
-        return orders.stream()
-                .map(order -> modelMapper.map(order, OrderResponse.class))
-                .collect(Collectors.toList());
+    public List<Order> getAllOrdersByUserId(long userId) {
+        return orderRepository.findByUserId(userId);
     }
 
     @Override
-    public OrderResponse updateOrder(long orderId, OrderDTO orderDTO) {
+    public Order updateOrder(long orderId, OrderDTO orderDTO) {
         return null;
     }
 
