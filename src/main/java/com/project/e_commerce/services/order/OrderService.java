@@ -111,8 +111,35 @@ public class OrderService implements  IOrderService{
         Order existingOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new DataNotFoundException("Order Not Found with id: " + orderId));
 
-        // Kiểm tra nếu có thay đổi user_id
-        if (orderDTO.getUserId() != null && !orderDTO.getUserId().equals(existingOrder.getUser().getId())) {
+        // Cập nhật tất cả các trường, nếu null thì set về null
+        if (orderDTO.getUserId() != null) {
+            User newUser = userRepository.findById(orderDTO.getUserId())
+                    .orElseThrow(() -> new DataNotFoundException("User Not Found with id: " + orderDTO.getUserId()));
+            existingOrder.setUser(newUser);
+        }
+        existingOrder.setFullname(orderDTO.getFullName());
+        existingOrder.setEmail(orderDTO.getEmail());
+        existingOrder.setPhoneNumber(orderDTO.getPhoneNumber());
+        existingOrder.setAddress(orderDTO.getAddress());
+        existingOrder.setNotes(orderDTO.getNotes());
+        existingOrder.setShippingMethod(orderDTO.getShippingMethod());
+        existingOrder.setShippingAddress(orderDTO.getShippingAddress());
+        existingOrder.setPaymentMethod(orderDTO.getPaymentMethod());
+        existingOrder.setTotalPrice(orderDTO.getTotalPrice());
+        existingOrder.setShippingDate(orderDTO.getShippingDate());
+
+        Order updatedOrder = orderRepository.save(existingOrder);
+        return modelMapper.map(updatedOrder, OrderResponse.class);
+    }
+
+    @Override
+    public OrderResponse partialUpdateOrder(long orderId, OrderDTO orderDTO) {
+        // Phương thức mới cho PATCH - cập nhật từng phần
+        Order existingOrder = orderRepository.findById(orderId)
+                .orElseThrow(() -> new DataNotFoundException("Order Not Found with id: " + orderId));
+
+        // Chỉ cập nhật các trường không null
+        if (orderDTO.getUserId() != null) {
             User newUser = userRepository.findById(orderDTO.getUserId())
                     .orElseThrow(() -> new DataNotFoundException("User Not Found with id: " + orderDTO.getUserId()));
             existingOrder.setUser(newUser);
@@ -126,11 +153,16 @@ public class OrderService implements  IOrderService{
         if (orderDTO.getShippingAddress() != null) existingOrder.setShippingAddress(orderDTO.getShippingAddress());
         if (orderDTO.getPaymentMethod() != null) existingOrder.setPaymentMethod(orderDTO.getPaymentMethod());
         if (orderDTO.getTotalPrice() != null) existingOrder.setTotalPrice(orderDTO.getTotalPrice());
+        if (orderDTO.getShippingDate() != null) {
+            if (orderDTO.getShippingDate().isBefore(LocalDateTime.now())) {
+                throw new DataNotFoundException("Shipping Date must be after the current date");
+            }
+            existingOrder.setShippingDate(orderDTO.getShippingDate());
+        }
 
         Order updatedOrder = orderRepository.save(existingOrder);
         return modelMapper.map(updatedOrder, OrderResponse.class);
     }
-
     @Override
     public void deleteOrder(long orderId) {
         Order order = orderRepository.findById(orderId)

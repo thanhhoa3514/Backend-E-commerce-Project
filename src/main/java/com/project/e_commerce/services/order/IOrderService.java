@@ -13,6 +13,8 @@ public interface IOrderService {
     OrderResponse getOrderById(long orderId);
     List<OrderResponse> getAllOrdersByUserId(long userId);
     OrderResponse updateOrder(long orderId,OrderDTO orderDTO);
+    OrderResponse partialUpdateOrder(long orderId, OrderDTO orderDTO);
     void deleteOrder(long orderId);
     void updateOrderStatus(long orderId, String status);
+
 }

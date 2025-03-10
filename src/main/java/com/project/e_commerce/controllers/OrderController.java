@@ -75,6 +75,18 @@ public class OrderController {
         }
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> partialUpdateOrder(
+            @Valid @RequestBody OrderDTO orderDTO,
+            @PathVariable Long id) {
+
+        try {
+            OrderResponse updatedOrder = orderService.updateOrder(id, orderDTO);
+            return ResponseEntity.ok().body(updatedOrder);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrderByIdOfThisOrder(@Valid @PathVariable("id") Long id) {
         try {
