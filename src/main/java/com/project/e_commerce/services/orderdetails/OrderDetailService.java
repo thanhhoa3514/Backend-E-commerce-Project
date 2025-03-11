@@ -72,6 +72,21 @@ public class OrderDetailService implements IOrderDetailService {
         OrderDetail existingOrderDetail = orderDetailRepository.findById(orderDetailId)
                 .orElseThrow(() -> new DataNotFoundException("Order Detail Not Found"));
 
+        if (orderDetailDTO.getOrderId() != null &&
+                !orderDetailDTO.getOrderId().equals(existingOrderDetail.getOrder().getId())) {
+            Order order = orderRepository.findById(orderDetailDTO.getOrderId())
+                    .orElseThrow(() -> new DataNotFoundException("Order Not Found"));
+            existingOrderDetail.setOrder(order);
+        }
+
+
+        if (orderDetailDTO.getProductId() != null &&
+                !orderDetailDTO.getProductId().equals(existingOrderDetail.getProduct().getId())) {
+            Product product = productRepository.findById(orderDetailDTO.getProductId())
+                    .orElseThrow(() -> new DataNotFoundException("Product Not Found"));
+            existingOrderDetail.setProduct(product);
+        }
+
         // Cập nhật các trường có thể thay đổi
         if (orderDetailDTO.getQuantity() > 0) {
             existingOrderDetail.setQuantity(orderDetailDTO.getQuantity());
