@@ -8,10 +8,12 @@ import com.project.e_commerce.models.Product;
 import com.project.e_commerce.repositories.OrderDetailRepository;
 import com.project.e_commerce.repositories.OrderRepository;
 import com.project.e_commerce.repositories.ProductRepository;
+import com.project.e_commerce.responses.OrderDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class OrderDetailService implements IOrderDetailService {
     private final ProductRepository productRepository;
 
     @Override
-    public OrderDetail createOrderDetail(OrderDetailDTO orderDetailDTO) {
+    public OrderDetailResponse createOrderDetail(OrderDetailDTO orderDetailDTO) {
         Order order = orderRepository.findById(orderDetailDTO.getOrderId())
                 .orElseThrow(() -> new DataNotFoundException("Order Not Found"));
 
@@ -36,22 +38,28 @@ public class OrderDetailService implements IOrderDetailService {
                 .totalMoney(orderDetailDTO.getTotalMoney())
                 .build();
         
-        return orderDetailRepository.save(orderDetail);
+        OrderDetail savedOrderDetail = orderDetailRepository.save(orderDetail);
+    
+        return convertToResponse(savedOrderDetail);
     }
 
     @Override
-    public OrderDetail getOrderDetailById(long orderDetailId) {
-        return orderDetailRepository.findById(orderDetailId)
-                .orElseThrow(() -> new DataNotFoundException("Order Detail Not Found"));
+    public OrderDetailResponse getOrderDetailById(long orderDetailId) {
+        OrderDetail orderDetail = orderDetailRepository.findById(orderDetailId)
+            .orElseThrow(() -> new DataNotFoundException("Order Detail Not Found"));
+        return convertToResponse(orderDetail);
     }
 
     @Override
-    public List<OrderDetail> getAllOrderDetailsByOrderId(long orderId) {
+    public List<OrderDetailResponse> getAllOrderDetailsByOrderId(long orderId) {
         // Kiểm tra order có tồn tại không
         orderRepository.findById(orderId)
-                .orElseThrow(() -> new DataNotFoundException("Order Not Found"));
-                
-        return orderDetailRepository.findOrderDetailByOrderId(orderId);
+            .orElseThrow(() -> new DataNotFoundException("Order Not Found"));
+            
+        List<OrderDetail> orderDetails = orderDetailRepository.findOrderDetailByOrderId(orderId);
+        return orderDetails.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
 //    @Override
@@ -60,7 +68,7 @@ public class OrderDetailService implements IOrderDetailService {
 //    }
 
     @Override
-    public OrderDetail updateOrderDetail(long orderDetailId, OrderDetailDTO orderDetailDTO) {
+    public OrderDetailResponse updateOrderDetail(long orderDetailId, OrderDetailDTO orderDetailDTO) {
         OrderDetail existingOrderDetail = orderDetailRepository.findById(orderDetailId)
                 .orElseThrow(() -> new DataNotFoundException("Order Detail Not Found"));
 
@@ -75,7 +83,8 @@ public class OrderDetailService implements IOrderDetailService {
             existingOrderDetail.setTotalMoney(orderDetailDTO.getTotalMoney());
         }
 
-        return orderDetailRepository.save(existingOrderDetail);
+        OrderDetail updatedOrderDetail = orderDetailRepository.save(existingOrderDetail);
+        return convertToResponse(updatedOrderDetail);
     }
 
     @Override
@@ -83,5 +92,18 @@ public class OrderDetailService implements IOrderDetailService {
         OrderDetail orderDetail = orderDetailRepository.findById(orderDetailId)
                 .orElseThrow(() -> new DataNotFoundException("Order Detail Not Found"));
         orderDetailRepository.delete(orderDetail);
+    }
+
+    private OrderDetailResponse convertToResponse(OrderDetail orderDetail) {
+        return OrderDetailResponse.builder()
+                .id(orderDetail.getId())
+                .orderId(orderDetail.getOrder().getId())
+                .productId(orderDetail.getProduct().getId())
+                .productName(orderDetail.getProduct().getName())
+                .quantity(orderDetail.getQuantity())
+                .totalMoney(orderDetail.getTotalMoney())
+                .color(orderDetail.getColor())
+                .createdAt(orderDetail.getCreatedAt())
+                .build();
     }
 }
