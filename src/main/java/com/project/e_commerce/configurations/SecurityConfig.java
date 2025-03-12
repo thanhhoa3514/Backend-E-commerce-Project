@@ -28,6 +28,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/v1/users/register", "/api/v1/users/login").permitAll()
                 .requestMatchers("/api/v1/products/**").permitAll()
+                    .requestMatchers("/api/v1/categories/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
