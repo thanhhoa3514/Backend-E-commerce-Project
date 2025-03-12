@@ -10,6 +10,6 @@ public interface IUserService {
 
     User createUser(UserDTO userDTO);
     User getUserById(long userId);
-    String userLogin(String phone, String password);
+    String userLogin(String phone, String password) throws Exception;
     Optional<User> findByPhoneNumber(String phoneNumber);
 }

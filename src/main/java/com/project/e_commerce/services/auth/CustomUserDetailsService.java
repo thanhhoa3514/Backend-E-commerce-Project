@@ -1,7 +1,7 @@
 package com.project.e_commerce.services.auth;
 
 import com.project.e_commerce.models.User;
-import com.project.e_commerce.services.UserService;
+import com.project.e_commerce.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-        User user = userService.findByPhoneNumber(phoneNumber)
+        User user = userRepository.findByPhoneNumber(phoneNumber)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
         return org.springframework.security.core.userdetails.User

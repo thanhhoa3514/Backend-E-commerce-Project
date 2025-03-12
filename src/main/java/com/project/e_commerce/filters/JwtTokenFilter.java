@@ -21,7 +21,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenUtils jwtTokenUtils;
-    private final CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -34,7 +34,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 String phoneNumber = jwtTokenUtils.extractUsername(token);
 
                 if (phoneNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(phoneNumber);
+                    UserDetails userDetails = customUserDetailsService.loadUserByUsername(phoneNumber);
                     if (jwtTokenUtils.validateToken(token, userDetails)) {
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
