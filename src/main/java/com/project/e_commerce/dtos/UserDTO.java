@@ -2,48 +2,49 @@ package com.project.e_commerce.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Builder
 public class UserDTO {
     @JsonProperty("fullname")
+    @NotBlank(message = "Full name is required")
     private String fullName;
 
     @JsonProperty("phone_number")
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
-    private String address;
-
-    @NotEmpty(message = "Password is required")
-    private String password;
-
-    @JsonProperty("email")
+    @Email(message = "Please provide a valid email address")
+    @NotBlank(message = "Email is required")
     private String email;
 
+    @NotBlank(message = "Password is required")
+    private String password;
+
     @JsonProperty("retype_password")
+    @NotBlank(message = "Retype password is required")
     private String retypePassword;
 
-    @JsonProperty("date_of_birth")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date dateOfBirth;
+    @NotBlank(message = "Address is required")
+    private String address;
 
+    @JsonProperty("date_of_birth")
+    private LocalDate dateOfBirth;
 
     @JsonProperty("facebook_account_id")
-    private int facebookAccountId;
-
+    private long facebookAccountId;
 
     @JsonProperty("google_account_id")
-    private int googleAccountId;
+    private long googleAccountId;
 
-    @NotNull(message = "Role id is required to identify")
     @JsonProperty("role_id")
+    @Min(value = 1, message = "Role ID must be greater than 0")
     private Long roleId;
 }

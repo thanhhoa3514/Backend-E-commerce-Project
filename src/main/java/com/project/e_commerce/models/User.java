@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -44,14 +45,14 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "date_of_birth")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
 
     @Column(name = "facebook_account_id")
-    private int facebookAccountId;
+    private long facebookAccountId;
 
     @Column(name = "google_account_id")
-    private int googleAccountId;
+    private long googleAccountId;
 
     @ManyToOne
     @JoinColumn(name = "role_id")

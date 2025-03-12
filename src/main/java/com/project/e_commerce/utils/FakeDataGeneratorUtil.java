@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.time.ZoneId;
+import java.time.LocalDate;
 
 @Component
 public class FakeDataGeneratorUtil {
@@ -26,7 +28,9 @@ public class FakeDataGeneratorUtil {
 //        user.setEmail(faker.internet().emailAddress());
         user.setPhoneNumber(faker.phoneNumber().cellPhone());
         user.setAddress(faker.address().fullAddress());
-        user.setDateOfBirth(faker.date().birthday());
+        user.setDateOfBirth(faker.date().birthday().toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate());
         user.setFacebookAccountId(faker.random().nextInt(100));
         user.setGoogleAccountId(faker.random().nextInt(100));
 
