@@ -1,26 +1,20 @@
 package com.project.e_commerce.controllers;
 
-import ch.qos.logback.core.util.StringUtil;
-import com.github.javafaker.Faker;
 import com.project.e_commerce.dtos.ProductDTO;
 
-import com.project.e_commerce.dtos.ProductImageDTO;
 import com.project.e_commerce.models.Product;
 import com.project.e_commerce.models.ProductImage;
 import com.project.e_commerce.responses.ProductListResponse;
 import com.project.e_commerce.responses.ProductResponse;
-import com.project.e_commerce.services.ProductImageService;
-import com.project.e_commerce.services.ProductService;
-import com.project.e_commerce.utils.FileValidationUtil;
+import com.project.e_commerce.services.product_image.ProductImageService;
+import com.project.e_commerce.services.product.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;

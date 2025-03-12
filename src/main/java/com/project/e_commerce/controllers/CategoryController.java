@@ -2,13 +2,12 @@ package com.project.e_commerce.controllers;
 
 import com.project.e_commerce.dtos.CategoryDTO;
 import com.project.e_commerce.models.Category;
-import com.project.e_commerce.services.CategoryService;
+import com.project.e_commerce.services.category.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -2,7 +2,7 @@ package com.project.e_commerce.controllers;
 
 import com.project.e_commerce.dtos.UserDTO;
 import com.project.e_commerce.dtos.UserLoginDTO;
-import com.project.e_commerce.services.UserService;
+import com.project.e_commerce.services.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -2,20 +2,13 @@ package com.project.e_commerce.services;
 
 
 import com.project.e_commerce.dtos.ProductDTO;
-import com.project.e_commerce.models.Product;
-import com.project.e_commerce.models.User;
 import com.project.e_commerce.repositories.ProductRepository;
-import com.project.e_commerce.repositories.UserRepository;
-import com.project.e_commerce.responses.ProductListResponse;
-import com.project.e_commerce.responses.ProductResponse;
+import com.project.e_commerce.services.product.ProductService;
 import com.project.e_commerce.utils.FakeDataGeneratorUtil;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 

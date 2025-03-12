@@ -1,9 +1,8 @@
-package com.project.e_commerce.services;
+package com.project.e_commerce.services.product;
 
 import com.project.e_commerce.dtos.ProductDTO;
 import com.project.e_commerce.dtos.ProductImageDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
-import com.project.e_commerce.exceptions.GlobalExceptionHandler;
 import com.project.e_commerce.exceptions.InvalidParamException;
 import com.project.e_commerce.models.Category;
 import com.project.e_commerce.models.Product;

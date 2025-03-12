@@ -1,8 +1,7 @@
-package com.project.e_commerce.services;
+package com.project.e_commerce.services.category;
 
 import com.project.e_commerce.dtos.CategoryDTO;
 import com.project.e_commerce.models.Category;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

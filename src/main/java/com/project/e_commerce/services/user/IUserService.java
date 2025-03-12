@@ -1,8 +1,7 @@
-package com.project.e_commerce.services;
+package com.project.e_commerce.services.user;
 
 import com.project.e_commerce.dtos.UserDTO;
 import com.project.e_commerce.models.User;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 

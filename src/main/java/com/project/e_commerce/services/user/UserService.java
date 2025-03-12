@@ -1,9 +1,8 @@
-package com.project.e_commerce.services;
+package com.project.e_commerce.services.user;
 
 import com.project.e_commerce.components.JwtTokenUtils;
 import com.project.e_commerce.dtos.UserDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
-import com.project.e_commerce.exceptions.GlobalExceptionHandler;
 import com.project.e_commerce.models.Role;
 import com.project.e_commerce.models.User;
 import com.project.e_commerce.repositories.RoleRepository;

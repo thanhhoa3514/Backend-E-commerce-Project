@@ -1,4 +1,4 @@
-package com.project.e_commerce.services;
+package com.project.e_commerce.services.product_image;
 
 import com.project.e_commerce.models.ProductImage;
 import org.springframework.web.multipart.MultipartFile;

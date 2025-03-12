@@ -1,9 +1,10 @@
-package com.project.e_commerce.services;
+package com.project.e_commerce.services.product_image;
 
 import com.project.e_commerce.dtos.ProductImageDTO;
 import com.project.e_commerce.exceptions.InvalidParamException;
 import com.project.e_commerce.models.Product;
 import com.project.e_commerce.models.ProductImage;
+import com.project.e_commerce.services.product.ProductService;
 import com.project.e_commerce.utils.FileValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
