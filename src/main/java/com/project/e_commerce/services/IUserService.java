@@ -9,5 +9,5 @@ public interface IUserService {
 
     User createUser(UserDTO userDTO);
     User getUserById(long userId);
-    String login(String phone, String password);
+    String userLogin(String phone, String password);
 }
