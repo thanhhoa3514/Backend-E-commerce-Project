@@ -7,6 +7,8 @@ import com.project.e_commerce.models.Role;
 import com.project.e_commerce.models.User;
 import com.project.e_commerce.repositories.RoleRepository;
 import com.project.e_commerce.repositories.UserRepository;
+import com.project.e_commerce.services.user.commands.IUserCommandService;
+import com.project.e_commerce.services.user.queries.IUserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,10 +23,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenUtils jwtTokenUtils;
+    private final IUserCommandService userCommandService;
+    private final IUserQueryService userQueryService;
+
     private final AuthenticationConfiguration authenticationConfiguration;
 
     private AuthenticationManager getAuthenticationManager() throws Exception {
@@ -33,42 +34,12 @@ public class UserService implements IUserService {
 
     @Override
     public User createUser(UserDTO userDTO) {
-        String phoneNumber = userDTO.getPhoneNumber();
-
-        if (userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new DataIntegrityViolationException("Phone number already exists");
-        }
-
-        if (!userDTO.getPassword().equals(userDTO.getRetypePassword())) {
-            throw new DataIntegrityViolationException("Password and retype password do not match");
-        }
-
-        User user = User.builder()
-                .fullName(userDTO.getFullName())
-                .phoneNumber(userDTO.getPhoneNumber())
-                .password(userDTO.getPassword())
-                .isActive(true)
-                .address(userDTO.getAddress())
-                .email(userDTO.getEmail())
-                .dateOfBirth(userDTO.getDateOfBirth())
-                .facebookAccountId(userDTO.getFacebookAccountId())
-                .googleAccountId(userDTO.getGoogleAccountId())
-                .build();
-        Role role = roleRepository.findById(userDTO.getRoleId())
-                .orElseThrow(() -> new DataNotFoundException("Role not found with id: " + userDTO.getRoleId()));
-        user.setRole(role);
-
-        if (userDTO.getFacebookAccountId() == 0 && userDTO.getGoogleAccountId() == 0) {
-            String password = userDTO.getPassword();
-            String encodePassword = passwordEncoder.encode(password);
-            user.setPassword(encodePassword);
-        }
-        return userRepository.save(user);
+        return userCommandService.createUser(userDTO);
     }
 
     @Override
     public User getUserById(long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User id not found "));
+        return userQueryService.getUserById(userId);
     }
     /****
      * CustomUserDetailsService -> UserRepository
@@ -80,25 +51,10 @@ public class UserService implements IUserService {
 
     @Override
     public String userLogin(String phoneNumber, String password) throws Exception {
-        Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
-        if (optionalUser.isEmpty()) {
-            throw new DataNotFoundException("Invalid phone number or password");
-        }
-        
-        User user = optionalUser.get();
-        if (user.getGoogleAccountId() == 0 && user.getFacebookAccountId() == 0) {
-            if (!passwordEncoder.matches(password, user.getPassword())) {
-                throw new BadCredentialsException("Wrong phone number or password");
-            }
-        }
-        
-        UsernamePasswordAuthenticationToken authenticationToken = 
-            new UsernamePasswordAuthenticationToken(phoneNumber, password);
-        getAuthenticationManager().authenticate(authenticationToken);
-        return jwtTokenUtils.generateToken(user);
+        return userCommandService.login(phoneNumber, password);
     }
 
     public Optional<User> findByPhoneNumber(String phoneNumber) {
-        return userRepository.findByPhoneNumber(phoneNumber);
+        return userQueryService.findByPhoneNumber(phoneNumber);
     }
 }
