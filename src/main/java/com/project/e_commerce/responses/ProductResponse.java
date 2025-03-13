@@ -12,6 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ProductResponse extends BaseResponse{
 
+    private Long id;
     private String name;
 
     private String description;

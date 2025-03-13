@@ -13,15 +13,15 @@ import org.springframework.data.domain.PageRequest;
 
 
 public interface IProductService{
-    public Product createProduct(ProductDTO productDTO);
-    Product getProductById(long idProduct);
+     Product createProduct(ProductDTO productDTO) throws InvalidParamException;
+    Product getProductById(long productId);
 
     Page<ProductResponse> getAllProducts(PageRequest pageRequest);
-    Product updateProduct(long idProduct, ProductDTO product);
-    void deleteProduct(long idProduct);
-//    boolean existsProduct(int idProduct);
+    Product updateProduct(long productId, ProductDTO product);
+    void deleteProduct(long productId);
+
     boolean exitsByName(String nameProduct);
     ProductImage createImagesForProduct(
-            Long idProduct,
+            Long productId,
             ProductImageDTO productImageDTO) throws InvalidParamException;
 }

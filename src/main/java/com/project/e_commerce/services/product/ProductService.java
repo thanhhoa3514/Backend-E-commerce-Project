@@ -11,6 +11,8 @@ import com.project.e_commerce.repositories.CategoryRepository;
 import com.project.e_commerce.repositories.ProductImageRepository;
 import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.responses.ProductResponse;
+import com.project.e_commerce.services.product.commands.IProductCommandService;
+import com.project.e_commerce.services.product.queries.IProductQueryService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -24,132 +26,48 @@ import java.util.Optional;
 public class ProductService implements IProductService {
 
 
-    private final ProductRepository productRepository;
-
-    private final CategoryRepository categoryRepository;
-
-    private final ProductImageRepository productImageRepository;
+    private final IProductCommandService productCommandService;
+    private final IProductQueryService productQueryService;
 
     @Override
-    public Product createProduct(ProductDTO productDTO) {
-
-        if (productDTO.getCategoryId() != null){
-            Category existingCategory=categoryRepository.findById(productDTO
-                            .getCategoryId())
-                    .orElseThrow(() ->new
-                            DataNotFoundException("Cannot find category with id: " + productDTO.getCategoryId()));
-
-            Product product = Product
-                    .builder()
-                    .name(productDTO.getName())
-                    .description(productDTO.getDescription())
-                    .price(productDTO.getPrice())
-                    .quantity(productDTO.getQuantity())
-                    .thumbnail(productDTO.getThumbnail())
-                    .categoryId(existingCategory)
-                    .build();
-
-            return productRepository.save(product);
-        }else {
-            throw new IllegalArgumentException("Category ID must be provided");
-        }
-
+    public Product createProduct(ProductDTO productDTO) throws InvalidParamException {
+        return productCommandService.createProduct(productDTO);
     }
 
     @Override
-    public Product getProductById(long idProduct) {
+    public Product getProductById(long productId) {
 
-        return productRepository
-                .findById(idProduct)
-                .orElseThrow(()->new DataNotFoundException("Cannot find product with id: " + idProduct));
+        return productQueryService.getProductById(productId);
     }
 
     @Override
     public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
 
-        return productRepository
-                .findAll(pageRequest)
-                .map(ProductResponse::from);
+        return productQueryService.getAllProducts(pageRequest);
     }
 
     @Override
-    public Product updateProduct(long idProduct, ProductDTO productDTO) {
-
-        Product existingProduct=getProductById(idProduct);
-
-        if (existingProduct == null) {
-            throw new DataNotFoundException("Cannot find product with id: " + idProduct);
-        }
-        if (productDTO.getCategoryId() != null) {
-            Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
-                    .orElseThrow(() ->
-                            new DataNotFoundException("Cannot find category with id: " +
-                                    productDTO.getCategoryId()));
-            existingProduct.setCategoryId(existingCategory);
-        }
-
-            if (productDTO.getName() != null) {
-                existingProduct.setName(productDTO.getName());
-            }
-            if (productDTO.getDescription() != null) {
-                existingProduct.setDescription(productDTO.getDescription());
-            }
-            if (productDTO.getPrice() > 0 && productDTO.getPrice() < 1000000) {
-                existingProduct.setPrice(productDTO.getPrice());
-            }
-            if (productDTO.getQuantity()>0) {
-                existingProduct.setQuantity(productDTO.getQuantity());
-            }
-            if (productDTO.getThumbnail() != null) {
-                existingProduct.setThumbnail(productDTO.getThumbnail());
-            }
-
-            return productRepository.save(existingProduct);
-
+    public Product updateProduct(long productId, ProductDTO productDTO) {
+        return productCommandService.updateProduct(productId, productDTO);
     }
 
     @Override
-    public void deleteProduct(long idProduct) {
-
-        Optional<Product> existingProduct=productRepository.findById(idProduct);
-
-        if(existingProduct.isPresent()) {
-
-            productRepository.delete(existingProduct.get());
-
-        }else {
-
-            throw new DataNotFoundException("Cannot find product with id: " + idProduct);
-        }
-
+    public void deleteProduct(long productId) {
+        productCommandService.deleteProduct(productId);
     }
 
     @Override
     public boolean exitsByName(String nameProduct) {
 
-        return productRepository.existsByName(nameProduct);
+        return productQueryService.existsByName(nameProduct);
 
     }
 
     @Override
     public ProductImage createImagesForProduct(
-            Long idProduct,
+            Long productId,
             ProductImageDTO productImageDTO) throws InvalidParamException {
 
-        Product existingProduct=productRepository
-                .findById(idProduct)
-                .orElseThrow(()->new DataNotFoundException(
-                        "Cannot find product with id: " + productImageDTO.getProductId()));
-        ProductImage productImage= ProductImage
-                .builder()
-                .product(existingProduct)
-                .imageUrl(productImageDTO.getImageUrl())
-                .build();
-
-        int numberOfImagesInProduct=productImageRepository.findByProductId(existingProduct.getId()).size();
-        if(numberOfImagesInProduct>=ProductImage.MAXIMUM_IMAGES_PER_ONE) {
-            throw new InvalidParamException("Each product can only have up to 5 images.");
-        }
-        return productImageRepository.save(productImage);
+        return productCommandService.createProductImage(productId, productImageDTO);
     }
 }

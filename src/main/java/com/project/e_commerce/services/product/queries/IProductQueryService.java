@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 
 public interface IProductQueryService {
 
-    Product getProductById(long idProduct);
-
+    Product getProductById(long productId);
     Page<ProductResponse> getAllProducts(PageRequest pageRequest);
+    boolean existsByName(String name);
 }
