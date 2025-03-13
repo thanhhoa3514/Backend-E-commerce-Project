@@ -7,12 +7,22 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import com.project.e_commerce.enums.ShippingMethod;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class OrderDTO {
     @JsonIgnore
@@ -22,7 +32,6 @@ public class OrderDTO {
 
     @JsonProperty("fullname")
     private String fullName;
-
 
     private String email;
 
@@ -38,28 +47,23 @@ public class OrderDTO {
     @Min(value = 1,message = "Total money must be greater than zero")
     private Double totalPrice;
 
-    @JsonProperty("shipping_method")
-    private String shippingMethod;
+    @NotNull(message = "Shipping method is required")
+    private ShippingMethod shippingMethod;
 
     @JsonProperty("shipping_address")
     private String shippingAddress;
 
-
-//    @JsonProperty("shipping_date")
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-//    private LocalDate shippingDate;
+    @JsonIgnore
+    private LocalDateTime shippingDate;
 
     @JsonIgnore
-    private Date shippingDate;
+    private LocalDateTime estimatedDeliveryFrom;
 
     @JsonIgnore
-    private Date estimatedDeliveryFrom;
-
-    @JsonIgnore
-    private Date estimatedDeliveryTo;
+    private LocalDateTime estimatedDeliveryTo;
 
     @JsonProperty("payment_method")
     private String paymentMethod;
 
-
+    private List<OrderDetailDTO> orderDetails;
 }

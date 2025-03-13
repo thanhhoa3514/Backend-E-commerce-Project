@@ -8,6 +8,7 @@ import com.project.e_commerce.models.User;
 import com.project.e_commerce.repositories.OrderRepository;
 import com.project.e_commerce.repositories.UserRepository;
 import com.project.e_commerce.responses.OrderResponse;
+import com.project.e_commerce.services.order.DeliveryTimeCalculator;
 import com.project.e_commerce.services.order.mappers.IOrderMapperService;
 import com.project.e_commerce.services.order.validation.OrderValidationService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
     private final UserRepository userRepository;
     private final OrderValidationService orderValidationService;
     private final IOrderMapperService orderMapperService;
+    private final DeliveryTimeCalculator deliveryTimeCalculator;
 
 
     @Override
@@ -37,10 +39,11 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
         order.setOrderStatus(OrderStatus.PENDING);
         order.setActive(true);
 
-        LocalDateTime shippingDateTime = orderDTO.getShippingDate() != null ?
-                orderDTO.getShippingDate().atStartOfDay() : LocalDateTime.now();
-        orderValidationService.validateShippingDate(shippingDateTime);
-        order.setShippingDate(shippingDateTime);
+        // Calculate delivery time
+        DeliveryTimeCalculator.DeliveryTimeRange deliveryTime = 
+            deliveryTimeCalculator.calculateDeliveryTime(orderDTO.getShippingMethod());
+        order.setEstimatedDeliveryFrom(deliveryTime.getFromDate());
+        order.setEstimatedDeliveryTo(deliveryTime.getToDate());
 
         Order savedOrder = orderRepository.save(order);
         return orderMapperService.mapToOrderResponse(savedOrder);
@@ -60,9 +63,8 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
         orderMapperService.updateOrderFromDTO(existingOrder, orderDTO);
 
         if (orderDTO.getShippingDate() != null) {
-            LocalDateTime shippingDateTime = orderDTO.getShippingDate().atStartOfDay();
-            orderValidationService.validateShippingDate(shippingDateTime);
-            existingOrder.setShippingDate(shippingDateTime);
+            orderValidationService.validateShippingDate(orderDTO.getShippingDate());
+            existingOrder.setShippingDate(orderDTO.getShippingDate());
         }
 
         Order updatedOrder = orderRepository.save(existingOrder);

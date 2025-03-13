@@ -61,6 +61,8 @@ public class OrderResponse{
     @JsonProperty("status")
     private OrderStatus orderStatus;
 
+    private String estimatedDeliveryTime;
+
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
 

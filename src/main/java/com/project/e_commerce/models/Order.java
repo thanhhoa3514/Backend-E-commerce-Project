@@ -39,6 +39,12 @@ public class Order extends BaseEntity{
     @Column(name = "notes")
     private String notes;
 
+    @Column(name = "estimated_delivery_from")
+    private LocalDateTime estimatedDeliveryFrom;
+
+    @Column(name = "estimated_delivery_to")
+    private LocalDateTime estimatedDeliveryTo;
+
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
