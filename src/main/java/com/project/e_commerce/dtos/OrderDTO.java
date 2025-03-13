@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotNull;
 import com.project.e_commerce.enums.ShippingMethod;
+import jakarta.validation.constraints.Email;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,9 +22,8 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
 public class OrderDTO {
     @JsonIgnore
     @JsonProperty("user_id")
@@ -31,14 +31,18 @@ public class OrderDTO {
     private Long userId;
 
     @JsonProperty("fullname")
+    @NotBlank(message = "Full name is required")
     private String fullName;
 
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
 
     @JsonProperty("phone_number")
-    @NotBlank(message = "Phone number must be at least 5 characters")
+    @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
+    @NotBlank(message = "Address is required")
     private String address;
 
     private String notes;
@@ -55,12 +59,6 @@ public class OrderDTO {
 
     @JsonIgnore
     private LocalDateTime shippingDate;
-
-    @JsonIgnore
-    private LocalDateTime estimatedDeliveryFrom;
-
-    @JsonIgnore
-    private LocalDateTime estimatedDeliveryTo;
 
     @JsonProperty("payment_method")
     private String paymentMethod;

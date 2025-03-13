@@ -2,6 +2,7 @@ package com.project.e_commerce.models;
 
 
 import com.project.e_commerce.models.enums.OrderStatus;
+import com.project.e_commerce.enums.ShippingMethod;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,7 +51,8 @@ public class Order extends BaseEntity{
 
 
     @Column(name = "shipping_method")
-    private String shippingMethod;
+    @Enumerated(EnumType.STRING)
+    private ShippingMethod shippingMethod;
 
     @Column(name = "shipping_address")
     private String shippingAddress;

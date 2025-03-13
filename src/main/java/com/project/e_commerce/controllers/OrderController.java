@@ -83,9 +83,8 @@ public class OrderController {
     public ResponseEntity<?> partialUpdateOrder(
             @Valid @RequestBody OrderDTO orderDTO,
             @PathVariable Long id) {
-
         try {
-            OrderResponse updatedOrder = orderService.updateOrder(id, orderDTO);
+            OrderResponse updatedOrder = orderService.partialUpdateOrder(id, orderDTO);
             return ResponseEntity.ok().body(updatedOrder);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

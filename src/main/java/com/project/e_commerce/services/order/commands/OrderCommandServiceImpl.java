@@ -4,6 +4,7 @@ import com.project.e_commerce.dtos.OrderDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Order;
 import com.project.e_commerce.models.enums.OrderStatus;
+import com.project.e_commerce.enums.ShippingMethod;
 import com.project.e_commerce.models.User;
 import com.project.e_commerce.repositories.OrderRepository;
 import com.project.e_commerce.repositories.UserRepository;
@@ -39,11 +40,8 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
         order.setOrderStatus(OrderStatus.PENDING);
         order.setActive(true);
 
-        // Calculate delivery time
-        DeliveryTimeCalculator.DeliveryTimeRange deliveryTime = 
-            deliveryTimeCalculator.calculateDeliveryTime(orderDTO.getShippingMethod());
-        order.setEstimatedDeliveryFrom(deliveryTime.getFromDate());
-        order.setEstimatedDeliveryTo(deliveryTime.getToDate());
+        // Calculate delivery time based on shipping method
+        updateDeliveryTimeEstimates(order, orderDTO.getShippingMethod());
 
         Order savedOrder = orderRepository.save(order);
         return orderMapperService.mapToOrderResponse(savedOrder);
@@ -62,6 +60,12 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
 
         orderMapperService.updateOrderFromDTO(existingOrder, orderDTO);
 
+        // Recalculate delivery time if shipping method changes
+        if (orderDTO.getShippingMethod() != null && 
+            !orderDTO.getShippingMethod().equals(existingOrder.getShippingMethod())) {
+            updateDeliveryTimeEstimates(existingOrder, orderDTO.getShippingMethod());
+        }
+
         if (orderDTO.getShippingDate() != null) {
             orderValidationService.validateShippingDate(orderDTO.getShippingDate());
             existingOrder.setShippingDate(orderDTO.getShippingDate());
@@ -71,12 +75,37 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
         return orderMapperService.mapToOrderResponse(updatedOrder);
     }
 
+    private void updateDeliveryTimeEstimates(Order order, ShippingMethod shippingMethod) {
+        DeliveryTimeCalculator.DeliveryTimeRange deliveryTime = 
+            deliveryTimeCalculator.calculateDeliveryTime(shippingMethod);
+        order.setEstimatedDeliveryFrom(deliveryTime.getFromDate());
+        order.setEstimatedDeliveryTo(deliveryTime.getToDate());
+    }
+
     @Override
     public OrderResponse partialUpdateOrder(long orderId, OrderDTO orderDTO) {
         Order existingOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new DataNotFoundException("Order Not Found"));
 
+        // Validate order status before allowing updates
+        if (existingOrder.getOrderStatus() == OrderStatus.COMPLETED || 
+            existingOrder.getOrderStatus() == OrderStatus.CANCELLED) {
+            throw new DataNotFoundException("Cannot update completed or cancelled order");
+        }
+
         orderMapperService.partialUpdateOrderFromDTO(existingOrder, orderDTO);
+
+        // Recalculate delivery time if shipping method changes
+        if (orderDTO.getShippingMethod() != null && 
+            !orderDTO.getShippingMethod().equals(existingOrder.getShippingMethod())) {
+            updateDeliveryTimeEstimates(existingOrder, orderDTO.getShippingMethod());
+        }
+
+        // Validate shipping date if provided
+        if (orderDTO.getShippingDate() != null) {
+            orderValidationService.validateShippingDate(orderDTO.getShippingDate());
+            existingOrder.setShippingDate(orderDTO.getShippingDate());
+        }
 
         Order updatedOrder = orderRepository.save(existingOrder);
         return orderMapperService.mapToOrderResponse(updatedOrder);
@@ -97,7 +126,10 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new DataNotFoundException("Order Not Found"));
 
-        order.setOrderStatus(OrderStatus.convertStringToEnum(status));
+        OrderStatus newStatus = OrderStatus.convertStringToEnum(status);
+        orderValidationService.validateStatusTransition(order, newStatus);
+        
+        order.setOrderStatus(newStatus);
         orderRepository.save(order);
     }
 }
