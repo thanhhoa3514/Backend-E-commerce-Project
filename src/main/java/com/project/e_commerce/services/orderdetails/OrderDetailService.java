@@ -9,6 +9,8 @@ import com.project.e_commerce.repositories.OrderDetailRepository;
 import com.project.e_commerce.repositories.OrderRepository;
 import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.responses.OrderDetailResponse;
+import com.project.e_commerce.services.order.commands.IOrderCommandService;
+import com.project.e_commerce.services.orderdetails.commands.IOrderDetailCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,29 +20,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OrderDetailService implements IOrderDetailService {
-    private final OrderRepository orderRepository;
-    private final OrderDetailRepository orderDetailRepository;
-    private final ProductRepository productRepository;
+    private final IOrderCommandService orderCommandService;
+    private final IOrderDetailCommandService iOrderDetailCommandService;
+
 
     @Override
     public OrderDetailResponse createOrderDetail(OrderDetailDTO orderDetailDTO) {
-        Order order = orderRepository.findById(orderDetailDTO.getOrderId())
-                .orElseThrow(() -> new DataNotFoundException("Order Not Found"));
-
-        Product product = productRepository.findById(orderDetailDTO.getProductId())
-                .orElseThrow(() -> new DataNotFoundException("Product Not Found"));
-
-        OrderDetail orderDetail = OrderDetail.builder()
-                .order(order)
-                .product(product)
-                .quantity(orderDetailDTO.getQuantity())
-                .color(orderDetailDTO.getColor())
-                .totalMoney(orderDetailDTO.getTotalMoney())
-                .build();
-        
-        OrderDetail savedOrderDetail = orderDetailRepository.save(orderDetail);
-    
-        return convertToResponse(savedOrderDetail);
+        return
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.project.e_commerce.controllers;
 
 
-import com.project.e_commerce.services.FakeDataService;
+import com.project.e_commerce.services.fake_data.FakeDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

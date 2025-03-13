@@ -22,10 +22,11 @@ import java.time.LocalDateTime;
 public class OrderCommandServiceImpl implements IOrderCommandService {
 
     private final OrderRepository orderRepository;
-    private final OrderMapperServiceImpl orderMapperService;
     private final UserRepository userRepository;
     private final OrderValidationService orderValidationService;
     private final IOrderMapperService orderMapperService;
+
+
     @Override
     public OrderResponse createOrder(OrderDTO orderDTO) {
         User user = userRepository.findById(orderDTO.getUserId())
