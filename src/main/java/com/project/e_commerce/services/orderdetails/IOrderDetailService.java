@@ -12,6 +12,7 @@ public interface IOrderDetailService {
     List<OrderDetailResponse> getAllOrderDetailsByOrderId(long orderId);
 //    OrderDetail updateOrderDetail(long orderDetailId, OrderDetail orderDetail);
 
+    OrderDetailResponse partialUpdateOrderDetail(long orderDetailId, OrderDetailDTO orderDetailDTO);
     OrderDetailResponse updateOrderDetail(long orderDetailId, OrderDetailDTO orderDetailDTO);
 
     void deleteOrderDetail(long orderDetailId);
