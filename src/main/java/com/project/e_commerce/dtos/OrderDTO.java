@@ -45,10 +45,18 @@ public class OrderDTO {
     private String shippingAddress;
 
 
-    @JsonProperty("shipping_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate shippingDate;
+//    @JsonProperty("shipping_date")
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+//    private LocalDate shippingDate;
 
+    @JsonIgnore
+    private Date shippingDate;
+
+    @JsonIgnore
+    private Date estimatedDeliveryFrom;
+
+    @JsonIgnore
+    private Date estimatedDeliveryTo;
 
     @JsonProperty("payment_method")
     private String paymentMethod;

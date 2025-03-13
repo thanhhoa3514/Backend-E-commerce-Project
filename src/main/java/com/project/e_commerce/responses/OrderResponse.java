@@ -3,10 +3,7 @@ package com.project.e_commerce.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.e_commerce.models.Order;
-import com.project.e_commerce.models.OrderStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.project.e_commerce.models.enums.OrderStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;

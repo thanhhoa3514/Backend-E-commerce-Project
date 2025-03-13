@@ -3,7 +3,7 @@ package com.project.e_commerce.services.order.validation;
 
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Order;
-import com.project.e_commerce.models.OrderStatus;
+import com.project.e_commerce.models.enums.OrderStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

@@ -1,5 +1,6 @@
 package com.project.e_commerce.models;
 
+import com.project.e_commerce.models.enums.OrderStatus;
 import jakarta.persistence.AttributeConverter;
 
 public class OrderStatusConverter implements AttributeConverter<OrderStatus, String> {

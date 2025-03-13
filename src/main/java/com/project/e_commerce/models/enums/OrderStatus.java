@@ -1,9 +1,8 @@
-package com.project.e_commerce.models;
+package com.project.e_commerce.models.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 public enum OrderStatus {
     PENDING("PENDING"),
