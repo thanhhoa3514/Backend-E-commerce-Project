@@ -9,6 +9,7 @@ import com.project.e_commerce.repositories.RoleRepository;
 import com.project.e_commerce.repositories.UserRepository;
 import com.project.e_commerce.services.user.commands.IUserCommandService;
 import com.project.e_commerce.services.user.queries.IUserQueryService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,16 +22,17 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService implements IUserService {
     private final IUserCommandService userCommandService;
     private final IUserQueryService userQueryService;
 
-    private final AuthenticationConfiguration authenticationConfiguration;
+//    private final AuthenticationConfiguration authenticationConfiguration;
 
-    private AuthenticationManager getAuthenticationManager() throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+//    private AuthenticationManager getAuthenticationManager() throws Exception {
+//        return authenticationConfiguration.getAuthenticationManager();
+//    }
 
     @Override
     public User createUser(UserDTO userDTO) {

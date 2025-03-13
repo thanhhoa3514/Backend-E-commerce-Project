@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,28 +35,33 @@ public class JwtTokenUtils {
         //  Convert User's properties to properties in spring security is called Claims
         Map<String, Object> claims = new HashMap<>();
         claims.put("phoneNumber", user.getPhoneNumber());
+        claims.put("role", user.getRole().getName());
         try {
-            String tokenGenerate= Jwts.builder()
+            // Log để debug
+            System.out.println("Generating token for user: " + user.getPhoneNumber());
+            System.out.println("User role: " + user.getRole().getName());
+            return Jwts.builder()
                     .setClaims(claims)
                     .setSubject(user.getPhoneNumber())
-                    .setExpiration(new Date(System.currentTimeMillis() + timeExpiration*1000L))
-                    .signWith(getSignInKey(), SignatureAlgorithm.HS512)
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + timeExpiration * 1000L))
+                    .signWith(getSignInKey(), SignatureAlgorithm.HS256)  // Đổi sang HS256
                     .compact();
-            return tokenGenerate;
         }catch (Exception e){
-            System.out.println("Something went wrong"+e.getMessage());
-            return null;
+            throw new RuntimeException("Could not generate token", e);
         }
     }
     private Key getSignInKey(){
-        byte[] bytes= Decoders.BASE64.decode(secretKey);
+//        String base64EncodedSecretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        String base64EncodedSecretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
+        byte[] bytes= Decoders.BASE64.decode(base64EncodedSecretKey);
         return Keys.hmacShaKeyFor(bytes);
     }
     private Claims extractAllClaims(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();
     }
     public <T> T extractClaims(String token, Function<Claims,T> claimsResolver){
@@ -67,9 +74,17 @@ public class JwtTokenUtils {
     public boolean isTokenExpired(String token){
         return extractAllClaims(token).getExpiration().before(new Date());
     }
-    public boolean validateToken(String token, UserDetails userDetails){
-        final String username= extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+    public boolean validateToken(String token, User user) {
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(user.getPhoneNumber())) && !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
     
 }

@@ -28,4 +28,5 @@ public class UserValidationService {
             throw new DataIntegrityViolationException("Password and retype password do not match");
         }
     }
+
 }

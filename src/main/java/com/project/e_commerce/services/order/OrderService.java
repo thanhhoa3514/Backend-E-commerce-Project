@@ -2,10 +2,13 @@ package com.project.e_commerce.services.order;
 
 import com.project.e_commerce.dtos.OrderDTO;
 
+import com.project.e_commerce.models.User;
 import com.project.e_commerce.responses.OrderResponse;
 import com.project.e_commerce.services.order.commands.IOrderCommandService;
 import com.project.e_commerce.services.order.queries.IOrderQueryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +23,15 @@ public class OrderService implements  IOrderService{
     private final IOrderQueryService orderQueryService;
 
     @Override
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public OrderResponse createOrder(OrderDTO orderDTO) {
+
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+
+        if (!orderDTO.getUserId().equals(currentUser.getId())) {
+            throw new RuntimeException("Unauthorized: Cannot create order for other users");
+        }
         return orderCommandService.createOrder(orderDTO);
     }
 

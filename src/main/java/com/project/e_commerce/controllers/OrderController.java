@@ -3,11 +3,14 @@ package com.project.e_commerce.controllers;
 import com.project.e_commerce.dtos.OrderDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Order;
+import com.project.e_commerce.models.User;
 import com.project.e_commerce.responses.OrderResponse;
 import com.project.e_commerce.services.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +20,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/orders")
+@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class OrderController {
     private final OrderService orderService;
     @PostMapping()
     public ResponseEntity<?> createOrder(@Valid  @RequestBody OrderDTO orderDTO, BindingResult bindingResult) {
         try {
-
+            User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if (bindingResult.hasErrors()) {
                 List<String> errorMessages = bindingResult
                         .getFieldErrors()
@@ -30,7 +34,7 @@ public class OrderController {
                         .toList();
                 return ResponseEntity.badRequest().body(errorMessages);
             }
-
+            orderDTO.setUserId(currentUser.getId());
             OrderResponse orderResponse=orderService.createOrder(orderDTO);
             return ResponseEntity.ok().body(orderResponse);
         }catch (Exception e) {

@@ -1,6 +1,7 @@
 package com.project.e_commerce.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +15,7 @@ import java.util.Date;
 @Data
 @Builder
 public class OrderDTO {
+    @JsonIgnore
     @JsonProperty("user_id")
     @Min(value = 1,message = "User's id must be greater than 0")
     private Long userId;

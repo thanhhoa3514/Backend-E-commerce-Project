@@ -29,6 +29,7 @@ public class UserCommandServiceImpl implements IUserCommandService {
     private final UserValidationService userValidationService;
     @Override
     public User createUser(UserDTO userDTO) {
+
         userValidationService.validateNewUser(userDTO);
 
         User user = userMapperService.mapToUser(userDTO);
@@ -46,6 +47,8 @@ public class UserCommandServiceImpl implements IUserCommandService {
 
     @Override
     public String login(String phoneNumber, String password) throws Exception {
+        // Log để debug
+        System.out.println("Attempting login for phone number: " + phoneNumber);
         User user = userRepository.findByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new DataNotFoundException("Invalid phone number or password"));
 
@@ -54,6 +57,9 @@ public class UserCommandServiceImpl implements IUserCommandService {
                 throw new BadCredentialsException("Wrong phone number or password");
             }
         }
+        // Log thông tin user trước khi tạo token
+        System.out.println("User found: " + user.getPhoneNumber());
+        System.out.println("User role: " + user.getRole().getName());
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(phoneNumber, password);

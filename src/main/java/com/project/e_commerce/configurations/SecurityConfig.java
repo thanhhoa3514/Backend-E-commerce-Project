@@ -29,6 +29,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/users/register", "/api/v1/users/login").permitAll()
                 .requestMatchers("/api/v1/products/**").permitAll()
                     .requestMatchers("/api/v1/categories/**").permitAll()
+                    .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/api/v1/orders/**").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers("/api/v1/cart/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
