@@ -29,17 +29,19 @@ public class ProductMapperServiceImpl implements  IProductMapperService {
 
     @Override
     public ProductResponse mapToProductResponse(Product product) {
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .thumbnail(product.getThumbnail())
-                .description(product.getDescription())
-                .categoryId(product.getCategoryId().getId())
-                .quantity(product.getQuantity())
-                .createdAt(product.getCreatedAt())
-                .updatedAt(product.getUpdatedAt())
-                .build();
+        ProductResponse response = ProductResponse.builder()
+            .id(product.getId())
+            .name(product.getName())
+            .price(product.getPrice())
+            .thumbnail(product.getThumbnail())
+            .description(product.getDescription())
+            .categoryId(product.getCategoryId().getId())
+            .quantity(product.getQuantity())
+            .build();
+    
+        response.setCreated_at(product.getCreatedAt());
+        response.setUpdated_at(product.getUpdatedAt());
+        return response;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.project.e_commerce.controllers;
 
 import com.project.e_commerce.dtos.CategoryDTO;
 import com.project.e_commerce.models.Category;
+import com.project.e_commerce.responses.CategoryResponse;
 import com.project.e_commerce.services.category.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,24 +31,34 @@ public class CategoryController {
             return ResponseEntity.badRequest().body(errorMessages);
 
         }
-        categoryService.createCategory(categoryDTO);
-        return ResponseEntity.ok("Category added: " + categoryDTO.getName());
+        try {
+            categoryService.createCategory(categoryDTO);
+            return ResponseEntity.ok("Category added: " + categoryDTO.getName());
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
 
 
     @GetMapping("")//http://localhost:8080/api/v1/categories?page=1&limit=10
-    public ResponseEntity<List<Category>> getAllCategories(
+    public ResponseEntity<List<CategoryResponse>> getAllCategories(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<Category> categories=categoryService.getAllCategories();
+        List<CategoryResponse> categories=categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
     @PutMapping("{id}")
     public ResponseEntity<String> updateCategory(@Valid @PathVariable Long id,@RequestBody CategoryDTO categoryDTO) {
-        categoryService.updateCategory(id,categoryDTO);
-        return ResponseEntity.ok("Category updated successfully");
+        try {
+            categoryService.updateCategory(id,categoryDTO);
+            return ResponseEntity.ok("Category updated successfully");
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
