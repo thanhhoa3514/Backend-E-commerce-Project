@@ -129,7 +129,22 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
         OrderStatus newStatus = OrderStatus.convertStringToEnum(status);
         orderValidationService.validateStatusTransition(order, newStatus);
         
+        // Khi chuyển sang trạng thái SHIPPING
+        if (newStatus == OrderStatus.SHIPPING) {
+            // Set shipping date là thời điểm hiện tại
+            order.setShippingDate(LocalDateTime.now());
+            // Tạo tracking number
+            order.setTrackingNumber(generateTrackingNumber(order));
+        }
+        
         order.setOrderStatus(newStatus);
         orderRepository.save(order);
+    }
+
+    private String generateTrackingNumber(Order order) {
+        // Format: ORD-[OrderId]-[Timestamp]
+        return String.format("ORD-%d-%d", 
+            order.getId(), 
+            System.currentTimeMillis());
     }
 }

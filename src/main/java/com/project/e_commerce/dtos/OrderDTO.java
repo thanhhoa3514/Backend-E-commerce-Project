@@ -51,15 +51,12 @@ public class OrderDTO {
     @Min(value = 1,message = "Total money must be greater than zero")
     private Double totalPrice;
 
-    @NotNull(message = "Shipping method is required")
+    @NotNull(message = "Phương thức vận chuyển không được để trống. Các giá trị hợp lệ: EXPRESS (Giao hàng nhanh), STANDARD (Giao hàng tiêu chuẩn), SAVING (Giao hàng tiết kiệm)")
     @JsonProperty("shipping_method")
     private ShippingMethod shippingMethod;
 
     @JsonProperty("shipping_address")
     private String shippingAddress;
-
-    @JsonIgnore
-    private LocalDateTime shippingDate;
 
     @JsonProperty("payment_method")
     private String paymentMethod;

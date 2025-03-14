@@ -3,6 +3,7 @@ package com.project.e_commerce.models;
 
 import com.project.e_commerce.models.enums.OrderStatus;
 import com.project.e_commerce.enums.ShippingMethod;
+import com.project.e_commerce.models.converters.ShippingMethodConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -51,7 +52,7 @@ public class Order extends BaseEntity{
 
 
     @Column(name = "shipping_method")
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = ShippingMethodConverter.class)
     private ShippingMethod shippingMethod;
 
     @Column(name = "shipping_address")
