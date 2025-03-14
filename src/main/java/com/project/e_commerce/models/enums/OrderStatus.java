@@ -7,7 +7,7 @@ import java.util.Arrays;
 public enum OrderStatus {
     PENDING("PENDING"),
     PROCESSING("PROCESSING"),
-    SHIPPED("SHIPPED"),
+    SHIPPING("SHIPPING"),
     COMPLETED("COMPLETED"),
     CANCELLED("CANCELLED");
 

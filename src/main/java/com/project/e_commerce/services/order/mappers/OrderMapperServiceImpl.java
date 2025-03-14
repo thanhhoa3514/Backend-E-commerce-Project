@@ -14,20 +14,41 @@ public class OrderMapperServiceImpl implements IOrderMapperService {
     private final ModelMapper modelMapper;
 
     public Order mapToOrder(OrderDTO orderDTO) {
-        modelMapper.typeMap(OrderDTO.class, Order.class)
-                .addMappings(mapper -> mapper.skip(Order::setId));
         return modelMapper.map(orderDTO, Order.class);
     }
 
     public OrderResponse mapToOrderResponse(Order order) {
-        modelMapper.typeMap(Order.class, OrderResponse.class)
-                .addMappings(mapper -> {
-                    mapper.map(src -> src.getUser().getId(), OrderResponse::setUserId);
-                    mapper.map(src -> src.getUser().getFullName(), OrderResponse::setUserName);
-                    mapper.map(Order::getCreatedAt, OrderResponse::setCreatedAt);
-                    mapper.map(Order::getUpdatedAt, OrderResponse::setUpdatedAt);
-                });
-        return modelMapper.map(order, OrderResponse.class);
+        // Create a new OrderResponse and set fields manually
+        OrderResponse response = new OrderResponse();
+        
+        // Basic fields
+        response.setId(order.getId());
+        response.setUserId(order.getUser().getId());
+        response.setUserName(order.getUser().getFullName());
+        response.setFullName(order.getFullname());
+        response.setEmail(order.getEmail());
+        response.setPhoneNumber(order.getPhoneNumber());
+        response.setAddress(order.getAddress());
+        response.setNotes(order.getNotes());
+        response.setOrderDate(order.getOrderDate());
+        response.setShippingMethod(order.getShippingMethod().name());
+        response.setShippingAddress(order.getShippingAddress());
+        response.setTrackingNumber(order.getTrackingNumber());
+        response.setShippingDate(order.getShippingDate());
+        response.setPaymentMethod(order.getPaymentMethod());
+        response.setTotalPrice(order.getTotalPrice());
+        response.setOrderStatus(order.getOrderStatus());
+        response.setCreatedAt(order.getCreatedAt());
+        response.setUpdatedAt(order.getUpdatedAt());
+        
+        // Handle estimated delivery time separately
+        if (order.getEstimatedDeliveryFrom() != null && order.getEstimatedDeliveryTo() != null) {
+            response.setEstimatedDeliveryTime(String.format("Dự kiến giao hàng từ %s đến %s", 
+                order.getEstimatedDeliveryFrom().toString(), 
+                order.getEstimatedDeliveryTo().toString()));
+        }
+        
+        return response;
     }
 
     @Override
@@ -45,7 +66,6 @@ public class OrderMapperServiceImpl implements IOrderMapperService {
 
     @Override
     public void partialUpdateOrderFromDTO(Order order, OrderDTO orderDTO) {
-
         if (orderDTO.getFullName() != null) order.setFullname(orderDTO.getFullName());
         if (orderDTO.getEmail() != null) order.setEmail(orderDTO.getEmail());
         if (orderDTO.getPhoneNumber() != null) order.setPhoneNumber(orderDTO.getPhoneNumber());
@@ -55,6 +75,5 @@ public class OrderMapperServiceImpl implements IOrderMapperService {
         if (orderDTO.getShippingAddress() != null) order.setShippingAddress(orderDTO.getShippingAddress());
         if (orderDTO.getPaymentMethod() != null) order.setPaymentMethod(orderDTO.getPaymentMethod());
         if (orderDTO.getTotalPrice() != null) order.setTotalPrice(orderDTO.getTotalPrice());
-
     }
 }

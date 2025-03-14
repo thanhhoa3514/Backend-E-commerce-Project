@@ -73,21 +73,25 @@ public class OrderResponse{
         return OrderResponse.builder()
                 .id(order.getId())
                 .userId(order.getUser().getId())
-                .userName(order.getUser().getFullName())  // Chỉ lấy tên user
+                .userName(order.getUser().getFullName())
                 .fullName(order.getFullname())
                 .email(order.getEmail())
                 .phoneNumber(order.getPhoneNumber())
                 .address(order.getAddress())
                 .notes(order.getNotes())
                 .orderDate(order.getOrderDate())
-                .shippingMethod(order.getShippingMethod())
+                .shippingMethod(order.getShippingMethod().name())
                 .shippingAddress(order.getShippingAddress())
                 .trackingNumber(order.getTrackingNumber())
                 .shippingDate(order.getShippingDate())
                 .paymentMethod(order.getPaymentMethod())
                 .totalPrice(order.getTotalPrice())
                 .orderStatus(order.getOrderStatus())
+                .estimatedDeliveryTime(String.format("Từ %s đến %s", 
+                    order.getEstimatedDeliveryFrom(), 
+                    order.getEstimatedDeliveryTo()))
                 .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
                 .build();
     }
 

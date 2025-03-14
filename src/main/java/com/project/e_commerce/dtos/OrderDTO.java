@@ -52,6 +52,7 @@ public class OrderDTO {
     private Double totalPrice;
 
     @NotNull(message = "Shipping method is required")
+    @JsonProperty("shipping_method")
     private ShippingMethod shippingMethod;
 
     @JsonProperty("shipping_address")
