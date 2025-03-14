@@ -17,10 +17,6 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "orders")
 public class Order extends BaseEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;

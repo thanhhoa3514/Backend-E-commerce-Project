@@ -39,6 +39,8 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
         order.setOrderDate(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.PENDING);
         order.setActive(true);
+        order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
 
         // Calculate delivery time based on shipping method
         updateDeliveryTimeEstimates(order, orderDTO.getShippingMethod());
@@ -64,11 +66,6 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
         if (orderDTO.getShippingMethod() != null && 
             !orderDTO.getShippingMethod().equals(existingOrder.getShippingMethod())) {
             updateDeliveryTimeEstimates(existingOrder, orderDTO.getShippingMethod());
-        }
-
-        if (orderDTO.getShippingDate() != null) {
-            orderValidationService.validateShippingDate(orderDTO.getShippingDate());
-            existingOrder.setShippingDate(orderDTO.getShippingDate());
         }
 
         Order updatedOrder = orderRepository.save(existingOrder);
@@ -99,12 +96,6 @@ public class OrderCommandServiceImpl implements IOrderCommandService {
         if (orderDTO.getShippingMethod() != null && 
             !orderDTO.getShippingMethod().equals(existingOrder.getShippingMethod())) {
             updateDeliveryTimeEstimates(existingOrder, orderDTO.getShippingMethod());
-        }
-
-        // Validate shipping date if provided
-        if (orderDTO.getShippingDate() != null) {
-            orderValidationService.validateShippingDate(orderDTO.getShippingDate());
-            existingOrder.setShippingDate(orderDTO.getShippingDate());
         }
 
         Order updatedOrder = orderRepository.save(existingOrder);
