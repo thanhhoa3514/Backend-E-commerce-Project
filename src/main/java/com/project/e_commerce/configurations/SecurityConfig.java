@@ -44,7 +44,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 // Orders: All operations for authenticated users
                 .requestMatchers("/api/v1/orders/**").hasAnyRole("USER", "ADMIN")
-                // Cart: All operations for authenticated users
+                    .requestMatchers("/api/v1/order_details/**").hasAnyRole("USER", "ADMIN")
+
+                    // Cart: All operations for authenticated users
                 .requestMatchers("/api/v1/cart/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
             )

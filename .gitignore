@@ -34,8 +34,7 @@ build/
 
 
 .env
-application.properties
-application.yml
+
 
 logs/
 *.log
