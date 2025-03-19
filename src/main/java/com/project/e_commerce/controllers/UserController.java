@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@RequestMapping("${api.prefix}/users")
+@RequestMapping("${api.prefix}/auth/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
