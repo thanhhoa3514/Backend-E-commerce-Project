@@ -47,3 +47,4 @@ mvnw.cmd
 *.class
 
 uploads/
+.cursor/

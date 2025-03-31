@@ -25,7 +25,7 @@ import java.util.function.Function;
 public class JwtTokenUtils {
 
     @Value("${jwt.expiration}")
-    private  Long timeExpiration; // Need to save an environment variables
+    private  Long timeExpiration; // Thời gian hết hạn tính bằng giây
 
     @Value("${jwt.secretKey}")
     private String secretKey;
@@ -40,6 +40,7 @@ public class JwtTokenUtils {
             // Log để debug
             System.out.println("Generating token for user: " + user.getPhoneNumber());
             System.out.println("User role: " + user.getRole().getName());
+            System.out.println("Token expiration time (seconds): " + timeExpiration);
             return Jwts.builder()
                     .setClaims(claims)
                     .setSubject(user.getPhoneNumber())

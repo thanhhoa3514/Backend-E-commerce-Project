@@ -3,8 +3,10 @@ package com.project.e_commerce.configurations;
 import com.project.e_commerce.filters.JwtTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
@@ -12,6 +14,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +34,9 @@ public class SecurityConfig {
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/v1/auth/users/register", "/api/v1/users/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/users/register", "/api/v1/users/login").permitAll()
+                    .requestMatchers("/api/v1/auth/validate-token").authenticated()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // Products: GET for all, POST/PUT/DELETE for admin only
                 .requestMatchers("/api/v1/products").permitAll()
                 .requestMatchers("/api/v1/products/**").permitAll()
@@ -44,12 +53,26 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/admin/**").hasRole("ADMIN")
                 // Orders: All operations for authenticated users
                 .requestMatchers("/api/v1/orders/**").hasAnyRole("USER", "ADMIN")
-                    .requestMatchers("/api/v1/order_details/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/api/v1/order_details/**").hasAnyRole("USER", "ADMIN")
 
-                    // Cart: All operations for authenticated users
+                // Cart: All operations for authenticated users
                 .requestMatchers("/api/v1/cart/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
             )
+
+                .cors(cors -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://127.0.0.1:4200")); 
+                    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Auth-Token", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
+                    configuration.setExposedHeaders(List.of("X-Auth-Token"));
+                    configuration.setAllowCredentials(true);
+                    configuration.setMaxAge(3600L);
+
+                    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                    source.registerCorsConfiguration("/**", configuration);
+                    cors.configurationSource(source);
+                })
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             );
