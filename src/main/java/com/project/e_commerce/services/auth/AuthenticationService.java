@@ -65,7 +65,7 @@ public class AuthenticationService {
                 .phoneNumber(registerDTO.getPhoneNumber())
                 .password(passwordEncoder.encode(registerDTO.getPassword()))
                 .address(registerDTO.getAddress())
-//                .active(true)
+                // .active(true)
                 .role(role)
                 .build();
 
@@ -121,16 +121,16 @@ public class AuthenticationService {
         }
     }
 
-//    public void logout(String token) {
-//        if (token != null && !token.isEmpty()) {
-//            // Add token to blacklist
-//            tokenBlacklistService.blacklistToken(token);
-//
-//            // Clear security context
-//            SecurityContextHolder.clearContext();
-//            log.info("User logged out successfully");
-//        }
-//    }
+    // public void logout(String token) {
+    //     if (token != null && !token.isEmpty()) {
+    //         // Add token to blacklist
+    //         tokenBlacklistService.blacklistToken(token);
+
+    //         // Clear security context
+    //         SecurityContextHolder.clearContext();
+    //         log.info("User logged out successfully");
+    //     }
+    // }
 
     public Map<String, String> refreshToken(String refreshToken) throws DataNotFoundException {
         if (!jwtService.validateToken(refreshToken)) {
