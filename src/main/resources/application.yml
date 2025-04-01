@@ -26,3 +26,5 @@ api:
 jwt:
   expiration: ${JWT_EXPIRATION} # seconds
   secretKey: ${JWT_SECRET_KEY}
+  refreshTokenExpirationMs: ${JWT_REFRESH_TOKEN}
+

@@ -1,13 +1,14 @@
 package com.project.e_commerce.services.user.commands;
 
 
-import com.project.e_commerce.components.JwtTokenUtils;
+
 import com.project.e_commerce.dtos.UserDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Role;
 import com.project.e_commerce.models.User;
 import com.project.e_commerce.repositories.RoleRepository;
 import com.project.e_commerce.repositories.UserRepository;
+import com.project.e_commerce.services.jwt.JwtServiceImpl;
 import com.project.e_commerce.services.user.mappers.IUserMapperService;
 import com.project.e_commerce.services.user.validation.UserValidationService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,8 @@ public class UserCommandServiceImpl implements IUserCommandService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenUtils jwtTokenUtils;
+    private final JwtServiceImpl jwtService;
+//    private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationManager authenticationManager;
     private final IUserMapperService userMapperService;
     private final UserValidationService userValidationService;
@@ -65,6 +67,6 @@ public class UserCommandServiceImpl implements IUserCommandService {
                 new UsernamePasswordAuthenticationToken(phoneNumber, password);
         authenticationManager.authenticate(authenticationToken);
 
-        return jwtTokenUtils.generateToken(user);
+        return jwtService.generateAccessToken(user);
     }
 }

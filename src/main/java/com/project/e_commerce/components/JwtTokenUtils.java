@@ -8,6 +8,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Component;
@@ -23,6 +25,8 @@ import java.util.function.Function;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenUtils.class);
 
     @Value("${jwt.expiration}")
     private  Long timeExpiration; // Thời gian hết hạn tính bằng giây
@@ -49,6 +53,7 @@ public class JwtTokenUtils {
                     .signWith(getSignInKey(), SignatureAlgorithm.HS256)  // Đổi sang HS256
                     .compact();
         }catch (Exception e){
+            logger.error("Could not generate token", e);
             throw new RuntimeException("Could not generate token", e);
         }
     }
