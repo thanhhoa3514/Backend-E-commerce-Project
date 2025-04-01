@@ -1,6 +1,7 @@
 package com.project.e_commerce.filters;
 import com.project.e_commerce.models.User;
 import com.project.e_commerce.repositories.UserRepository;
+import com.project.e_commerce.services.TokenBlacklistService;
 import com.project.e_commerce.services.jwt.IJwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,11 +24,14 @@ import java.util.ArrayList;
 
 import java.util.List;
 
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final IJwtService jwtService;
     private final UserRepository userRepository;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -36,6 +41,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
+                if (tokenBlacklistService.isTokenBlacklisted(token)) {
+                    log.warn("Blacklisted token used: {}", token);
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Token has been invalidated");
+                    return;
+                }
 
                     if (jwtService.validateToken(token)&& !jwtService.isTokenExpired(token)) {
                         String phoneNumber = jwtService.getUsernameFromToken(token);
@@ -54,7 +65,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                             SecurityContextHolder.getContext().setAuthentication(authToken);
                         }
                     } else {
-//                        log.error("Invalid JWT token");
+                        log.error("Invalid JWT token");
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         return;
                     }
