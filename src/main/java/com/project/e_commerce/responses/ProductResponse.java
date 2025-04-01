@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.e_commerce.models.Product;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 
 @Builder
 @Getter
@@ -18,7 +20,7 @@ public class ProductResponse extends BaseResponse{
     private String description;
 
 
-    private double price;
+    private BigDecimal price;
 
 
     private int quantity;
@@ -34,7 +36,7 @@ public class ProductResponse extends BaseResponse{
                 .builder()
                 .name(product.getName())
                 .description(product.getDescription())
-                .price(product.getPrice())
+                .price(BigDecimal.valueOf(product.getPrice()))
                 .quantity(product.getQuantity())
                 .thumbnail(product.getThumbnail())
                 .categoryId(product.getCategoryId().getId())

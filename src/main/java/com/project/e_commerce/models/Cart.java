@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,5 +42,11 @@ public class Cart {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+    public void addItem(CartItem item) {
+        cartItems.add(item);
+    }
+    public void removeItem(CartItem item) {
+        cartItems.remove(item);
     }
 }

@@ -3,6 +3,7 @@ package com.project.e_commerce.services.cart;
 import com.project.e_commerce.dtos.CartItemDTO;
 import com.project.e_commerce.dtos.CartResponseDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
+import com.project.e_commerce.mappers.ProductMapper;
 import com.project.e_commerce.models.*;
 import com.project.e_commerce.repositories.CartItemRepository;
 import com.project.e_commerce.repositories.CartRepository;
@@ -135,7 +136,7 @@ public class CartServiceImpl implements ICartService {
     }
 
     private CartItemResponseDTO mapToCartItemResponseDTO(CartItem item) {
-        ProductResponse product = productMapper.toProductResponseDTO(item.getProduct());
+        ProductResponse product = productMapper.toProductResponse(item.getProduct());
         BigDecimal itemTotal = product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
 
         return CartItemResponseDTO.builder()

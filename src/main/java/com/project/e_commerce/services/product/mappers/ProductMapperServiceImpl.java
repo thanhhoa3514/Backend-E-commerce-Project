@@ -9,6 +9,8 @@ import org.apache.catalina.mapper.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class ProductMapperServiceImpl implements  IProductMapperService {
@@ -18,13 +20,7 @@ public class ProductMapperServiceImpl implements  IProductMapperService {
 
     @Override
     public Product mapToProduct(ProductDTO productDTO) {
-        return Product.builder()
-                .name(productDTO.getName())
-                .description(productDTO.getDescription())
-                .price(productDTO.getPrice())
-                .quantity(productDTO.getQuantity())
-                .thumbnail(productDTO.getThumbnail())
-                .build();
+        return modelMapper.map(productDTO, Product.class);
     }
 
     @Override
@@ -32,7 +28,7 @@ public class ProductMapperServiceImpl implements  IProductMapperService {
         ProductResponse response = ProductResponse.builder()
             .id(product.getId())
             .name(product.getName())
-            .price(product.getPrice())
+            .price(BigDecimal.valueOf(product.getPrice()))
             .thumbnail(product.getThumbnail())
             .description(product.getDescription())
             .categoryId(product.getCategoryId().getId())
