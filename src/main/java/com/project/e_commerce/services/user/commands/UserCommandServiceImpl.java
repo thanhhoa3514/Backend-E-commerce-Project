@@ -2,7 +2,7 @@ package com.project.e_commerce.services.user.commands;
 
 
 
-import com.project.e_commerce.dtos.UserDTO;
+import com.project.e_commerce.dtos.user.UserDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Role;
 import com.project.e_commerce.models.User;

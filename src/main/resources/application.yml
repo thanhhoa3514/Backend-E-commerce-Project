@@ -23,6 +23,11 @@ spring:
       max-request-size: 10MB
 api:
   prefix: /api/v1
+
+security:
+  account:
+    max-failed-attempts: 5
+    lockout-duration-minutes: 30
 jwt:
   expiration: ${JWT_EXPIRATION} # seconds
   secretKey: ${JWT_SECRET_KEY}

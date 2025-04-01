@@ -1,7 +1,7 @@
 package com.project.e_commerce.services.user.validation;
 
 
-import com.project.e_commerce.dtos.UserDTO;
+import com.project.e_commerce.dtos.user.UserDTO;
 import com.project.e_commerce.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;

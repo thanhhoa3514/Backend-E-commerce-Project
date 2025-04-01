@@ -1,6 +1,5 @@
-package com.project.e_commerce.dtos;
+package com.project.e_commerce.dtos.user;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class UserDTO {
+public class UserRegisterDTO {
     @JsonProperty("fullname")
     @NotBlank(message = "Full name is required")
     private String fullName;
