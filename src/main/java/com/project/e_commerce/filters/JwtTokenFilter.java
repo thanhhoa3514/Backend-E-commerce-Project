@@ -1,10 +1,6 @@
 package com.project.e_commerce.filters;
-
-
-
 import com.project.e_commerce.models.User;
 import com.project.e_commerce.repositories.UserRepository;
-
 import com.project.e_commerce.services.jwt.IJwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

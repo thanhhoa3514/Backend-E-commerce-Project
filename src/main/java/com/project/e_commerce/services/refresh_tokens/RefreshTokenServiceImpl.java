@@ -8,8 +8,8 @@ import com.project.e_commerce.repositories.RefreshTokenRepository;
 import com.project.e_commerce.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements IRefreshTokenService{
 
-    @Value("${jwt.refreshToken}")
+    @Value("${jwt.refreshTokenExpirationMs}")
     private Long refreshTokenDurationMs;
     private RefreshTokenRepository refreshTokenRepository;
 

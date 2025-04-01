@@ -4,6 +4,7 @@ import com.project.e_commerce.models.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,12 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class JwtServiceImpl implements IJwtService {
 
     @Value("${jwt.secretKey}")
@@ -41,6 +44,7 @@ public class JwtServiceImpl implements IJwtService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("phoneNumber", user.getPhoneNumber());
         claims.put("role", user.getRole().getName());
+//        claims.put("jti", UUID.randomUUID().toString());
 
         return Jwts.builder()
                 .setClaims(claims)
