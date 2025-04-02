@@ -3,11 +3,13 @@ package com.project.e_commerce.services.cart.commands;
 import com.project.e_commerce.dtos.CartItemDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.exceptions.InvalidDataException;
+import com.project.e_commerce.models.Cart;
 import com.project.e_commerce.models.CartItem;
 //import jakarta.transaction.Transactional;
 import com.project.e_commerce.models.Product;
 import com.project.e_commerce.models.User;
 import com.project.e_commerce.repositories.CartItemRepository;
+import com.project.e_commerce.repositories.CartRepository;
 import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class CartCommandServiceImpl implements ICartCommandService {
+    private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
@@ -32,18 +35,27 @@ public class CartCommandServiceImpl implements ICartCommandService {
     @Override
     @Transactional
     public CartItem addToCart(CartItemDTO cartItemDTO, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new DataNotFoundException("User not found with id: " + userId));
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseGet(() -> {
+                    User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new DataNotFoundException("User not found"));
+                    Cart newCart = Cart.builder()
+                            .user(user)
+                            .build();
+                    return cartRepository.save(newCart);
+                });
 
         // Validate product
         Product product = productRepository.findById(cartItemDTO.getProductId())
-                .orElseThrow(() -> new DataNotFoundException("Product not found with id: " + cartItemDTO.getProductId()));
+                .orElseThrow(() -> new DataNotFoundException("Product not found"));
 
         // Validate quantity
         if (cartItemDTO.getQuantity() <= 0) {
             throw new InvalidDataException("Quantity must be greater than 0");
         }
-        CartItem existingCartItem = cartItemRepository.findByUserIdAndProductId(userId, cartItemDTO.getProductId());
+
+        // Check if product already in cart
+        CartItem existingCartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), cartItemDTO.getProductId());
 
         if (existingCartItem != null) {
             // Update quantity if product already in cart
@@ -53,7 +65,7 @@ public class CartCommandServiceImpl implements ICartCommandService {
         } else {
             // Create new cart item
             CartItem newCartItem = CartItem.builder()
-                    .user(user)
+                    .cart(cart)
                     .product(product)
                     .quantity(cartItemDTO.getQuantity())
                     .build();

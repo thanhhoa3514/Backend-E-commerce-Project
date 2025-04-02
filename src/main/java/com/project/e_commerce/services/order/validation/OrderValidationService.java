@@ -2,6 +2,7 @@ package com.project.e_commerce.services.order.validation;
 
 
 import com.project.e_commerce.exceptions.DataNotFoundException;
+import com.project.e_commerce.exceptions.InvalidDataException;
 import com.project.e_commerce.models.Order;
 import com.project.e_commerce.models.enums.OrderStatus;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,17 @@ import java.time.LocalDateTime;
 
 @Service
 public class OrderValidationService {
+    public void validateQuantity(int quantity) {
+        if (quantity <= 0) {
+            throw new InvalidDataException("Quantity must be greater than 0");
+        }
+    }
+
+    public void validateTotalMoney(double totalMoney) {
+        if (totalMoney <= 0) {
+            throw new InvalidDataException("Total money must be greater than 0");
+        }
+    }
 
     public void validateShippingDate(LocalDateTime shippingDate) {
         if (shippingDate != null && shippingDate.isBefore(LocalDateTime.now())) {
