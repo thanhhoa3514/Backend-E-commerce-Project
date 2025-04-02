@@ -39,6 +39,8 @@ public class ProductController {
 
     @GetMapping()
     public ResponseEntity<ProductListResponse> getAllProducts(
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(required = false) Long categoryId,
             @RequestParam("page") int page
             , @RequestParam("limit") int limit) {
 

@@ -1,6 +1,7 @@
 package com.project.e_commerce.services;
 
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -56,7 +59,7 @@ public class TokenBlacklistService {
      */
     public boolean isTokenBlacklisted(String token) {
         String blacklistKey = BLACKLIST_PREFIX + token;
-        return Boolean.TRUE.equals(redisTemplate.hasKey(blacklistKey));
+        return redisTemplate.hasKey(blacklistKey);
     }
 
     private Claims extractAllClaims(String token) {
