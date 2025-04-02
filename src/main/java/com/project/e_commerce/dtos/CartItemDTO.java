@@ -15,13 +15,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CartItemDTO {
 
-    @NotNull(message = "Product ID is required")
+    private Long id;
+
     @JsonProperty("product_id")
+    @NotNull(message = "Product ID is required")
     private Long productId;
+
+    @JsonProperty("product_name")
+    private String productName;
+
+    @JsonProperty("product_image")
+    private String productImage;
+
+    private Double price;
 
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
 
-    private String color;
-    private String size;
+    @JsonProperty("total_price")
+    private Double totalPrice;
 }

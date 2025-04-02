@@ -22,40 +22,44 @@ public class CartController {
     @GetMapping
     public ResponseEntity<CartResponseDTO> getCart(Authentication authentication) throws DataNotFoundException {
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(cartService.getCartByUser(user));
+        return ResponseEntity.ok(cartService.getCartByUser(user.getId()));
     }
 
 
-    @PostMapping("/items")
+    @PostMapping("/add")
     public ResponseEntity<CartResponseDTO> addItemToCart(
             Authentication authentication,
             @RequestBody @Valid CartItemDTO cartItemDTO) throws DataNotFoundException {
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(cartService.addItemToCart(user, cartItemDTO));
+        return ResponseEntity.ok(cartService.addItemToCart(user.getId(), cartItemDTO));
     }
 
 
     @PutMapping("/items/{itemId}")
     public ResponseEntity<CartResponseDTO> updateCartItem(
             Authentication authentication,
-            @PathVariable Long itemId,
+            @PathVariable Long cartItemId,
+
             @RequestBody @Valid CartItemDTO cartItemDTO) throws DataNotFoundException {
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(cartService.updateCartItem(user, itemId, cartItemDTO));
+        return ResponseEntity.ok(cartService.updateCartItem(cartItemId, cartItemDTO, user.getId()));
     }
 
-    @DeleteMapping("/items/{itemId}")
+    @DeleteMapping("/items/{cartItemId}")
     public ResponseEntity<CartResponseDTO> removeItemFromCart(
             Authentication authentication,
-            @PathVariable Long itemId) throws DataNotFoundException {
+            @PathVariable Long cartItemId) throws DataNotFoundException {
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(cartService.removeItemFromCart(user, itemId));
+        return ResponseEntity.ok(cartService.removeItemFromCart(cartItemId, user.getId()));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> clearCart(Authentication authentication) throws DataNotFoundException {
+    @DeleteMapping("/clear")
+    public ResponseEntity<CartResponseDTO> clearCart(Authentication authentication) throws DataNotFoundException {
         User user = (User) authentication.getPrincipal();
-        cartService.clearCart(user);
-        return ResponseEntity.noContent().build();
+
+        // Clear cart
+        CartResponseDTO response = cartService.clearCart(user.getId());
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,21 +1,18 @@
-package com.project.e_commerce.dtos;
-
+package com.project.e_commerce.responses;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.e_commerce.models.CartItemResponseDTO;
+import com.project.e_commerce.dtos.CartItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.List;
-
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CartResponseDTO {
+@AllArgsConstructor
+public class CartResponse {
     @JsonProperty("cart_items")
     private List<CartItemDTO> cartItems;
 
@@ -26,4 +23,6 @@ public class CartResponseDTO {
     private Integer totalItems;
 
     private String message;
+
+
 }
