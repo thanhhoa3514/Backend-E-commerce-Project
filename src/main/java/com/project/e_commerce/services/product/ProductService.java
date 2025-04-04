@@ -15,8 +15,10 @@ import com.project.e_commerce.services.product.commands.IProductCommandService;
 import com.project.e_commerce.services.product.queries.IProductQueryService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -69,5 +71,20 @@ public class ProductService implements IProductService {
             ProductImageDTO productImageDTO) throws InvalidParamException {
 
         return productCommandService.createProductImage(productId, productImageDTO);
+    }
+
+    @Cacheable(value = "productSearch",
+            key = "#categoryId + '_' + #minPrice + '_' + #maxPrice + '_' + #keyword + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort")
+    public Page<ProductDTO> searchProducts(
+            Long categoryId,
+            Double minPrice,
+            Double maxPrice,
+            String keyword,
+            Pageable pageable) {
+
+        Page<Product> products = productRepository.searchProducts(
+                categoryId, minPrice, maxPrice, keyword, pageable);
+
+        return products.map(productMapperService::toDTO);
     }
 }

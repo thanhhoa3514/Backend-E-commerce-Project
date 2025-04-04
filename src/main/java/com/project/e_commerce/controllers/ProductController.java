@@ -2,6 +2,7 @@ package com.project.e_commerce.controllers;
 
 import com.project.e_commerce.dtos.ProductDTO;
 
+import com.project.e_commerce.dtos.common.PagedResponseDTO;
 import com.project.e_commerce.models.Product;
 import com.project.e_commerce.models.ProductImage;
 import com.project.e_commerce.responses.ProductListResponse;
@@ -11,6 +12,7 @@ import com.project.e_commerce.services.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -143,6 +145,33 @@ public class ProductController {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
+    @GetMapping("/search")
+    public ResponseEntity<PagedResponseDTO<ProductDTO>> searchProducts(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
 
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("asc") ?
+                Sort.Direction.ASC : Sort.Direction.DESC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+
+        Page<ProductDTO> productPage = productService.searchProducts(
+                categoryId, minPrice, maxPrice, keyword, pageable);
+
+        PagedResponseDTO<ProductDTO> response = PagedResponseDTO.<ProductDTO>builder()
+                .content(productPage.getContent())
+                .currentPage(productPage.getNumber())
+                .totalItems(productPage.getTotalElements())
+                .totalPages(productPage.getTotalPages())
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 
 }
