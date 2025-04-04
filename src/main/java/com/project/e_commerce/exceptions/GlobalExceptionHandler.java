@@ -1,5 +1,6 @@
 package com.project.e_commerce.exceptions;
 
+import com.project.e_commerce.responses.ErrorResponseDTO;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +55,33 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
+    @ExceptionHandler(PaymentProcessingException.class)
+    public ResponseEntity<ErrorResponseDTO> handlePaymentProcessingException(PaymentProcessingException ex, WebRequest request) {
+        logger.error("Payment processing error: {}", ex.getMessage());
 
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.PAYMENT_REQUIRED.value())
+                .error("Payment Required")
+                .message(ex.getMessage())
+                .path(request.getDescription(false).substring(4))
+                .build();
 
+        return new ResponseEntity<>(errorResponse, HttpStatus.PAYMENT_REQUIRED);
+    }
+
+    @ExceptionHandler(InsufficientInventoryException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInsufficientInventoryException(InsufficientInventoryException ex, WebRequest request) {
+        logger.error("Insufficient inventory: {}", ex.getMessage());
+
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .error("Conflict")
+                .message(ex.getMessage())
+                .path(request.getDescription(false).substring(4))
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
         logger.error("Validation error: {}", ex.getMessage());
