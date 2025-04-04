@@ -15,7 +15,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000
+      cache-null-values: false
   servlet:
     multipart:
       enabled: true
@@ -29,6 +33,12 @@ spring:
       timeout: 60000
 api:
   prefix: /api/v1
+stripe:
+  secret:
+    key: your_stripe_secret_key
+  public:
+    key: your_stripe_public_key
+
 
 security:
   account:
@@ -49,7 +59,8 @@ management:
   metrics:
     tags:
       application: e-commerce-api
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
 
