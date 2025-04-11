@@ -4,7 +4,7 @@ import com.project.e_commerce.dtos.wishlist.WishlistDTO;
 import com.project.e_commerce.dtos.wishlist.WishlistItemDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Product;
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.models.Wishlist;
 import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.repositories.UserRepository;

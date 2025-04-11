@@ -1,7 +1,7 @@
 package com.project.e_commerce.services.refresh_tokens;
 
 import com.project.e_commerce.models.RefreshToken;
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 
 import java.util.Optional;
 

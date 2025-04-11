@@ -1,5 +1,5 @@
 package com.project.e_commerce.filters;
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.UserRepository;
 import com.project.e_commerce.services.TokenBlacklistService;
 import com.project.e_commerce.services.jwt.IJwtService;

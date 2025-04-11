@@ -1,6 +1,6 @@
 package com.project.e_commerce.services.auth;
 
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

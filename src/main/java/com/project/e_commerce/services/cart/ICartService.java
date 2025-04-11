@@ -4,7 +4,6 @@ import com.project.e_commerce.dtos.CartItemDTO;
 import com.project.e_commerce.dtos.CartResponseDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.CartItem;
-import com.project.e_commerce.models.User;
 
 public interface ICartService {
     CartResponseDTO getCartByUser(Long userId) throws DataNotFoundException;

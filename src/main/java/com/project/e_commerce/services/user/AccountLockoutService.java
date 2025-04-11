@@ -2,7 +2,7 @@ package com.project.e_commerce.services.user;
 
 
 import com.project.e_commerce.models.LoginAttempt;
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.LoginAttemptRepository;
 import com.project.e_commerce.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;

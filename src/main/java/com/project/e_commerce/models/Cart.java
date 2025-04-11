@@ -1,11 +1,11 @@
 package com.project.e_commerce.models;
 
 
+import com.project.e_commerce.models.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity

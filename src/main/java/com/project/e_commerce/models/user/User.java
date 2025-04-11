@@ -1,7 +1,9 @@
-package com.project.e_commerce.models;
+package com.project.e_commerce.models.user;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.project.e_commerce.models.BaseEntity;
+import com.project.e_commerce.models.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.time.LocalDate;
 
@@ -64,6 +65,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "locked_until")
     private LocalDateTime lockedUntil;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Settings settings;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

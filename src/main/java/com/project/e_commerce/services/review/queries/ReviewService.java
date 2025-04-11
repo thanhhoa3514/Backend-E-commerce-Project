@@ -7,7 +7,7 @@ import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.exceptions.InvalidDataException;
 import com.project.e_commerce.models.Product;
 import com.project.e_commerce.models.Review;
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.repositories.ReviewRepository;
 import com.project.e_commerce.repositories.UserRepository;

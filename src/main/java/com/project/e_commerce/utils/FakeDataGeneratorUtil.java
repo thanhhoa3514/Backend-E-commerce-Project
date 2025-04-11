@@ -2,15 +2,13 @@ package com.project.e_commerce.utils;
 
 import com.github.javafaker.Faker;
 import com.project.e_commerce.dtos.ProductDTO;
-import com.project.e_commerce.models.User;
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.user.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.time.ZoneId;
-import java.time.LocalDate;
 
 @Component
 public class FakeDataGeneratorUtil {

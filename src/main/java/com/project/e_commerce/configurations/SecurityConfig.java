@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.POST, "/api/v1/users/register", "/api/v1/users/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                     .requestMatchers("/api/v1/auth/validate-token").authenticated()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // Products: GET for all, POST/PUT/DELETE for admin only

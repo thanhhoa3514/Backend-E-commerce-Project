@@ -2,8 +2,7 @@ package com.project.e_commerce.controllers;
 
 import com.project.e_commerce.dtos.OrderDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
-import com.project.e_commerce.models.Order;
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.responses.OrderResponse;
 import com.project.e_commerce.services.order.OrderService;
 import jakarta.validation.Valid;

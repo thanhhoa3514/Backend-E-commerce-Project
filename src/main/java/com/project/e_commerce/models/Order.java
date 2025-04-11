@@ -4,6 +4,7 @@ package com.project.e_commerce.models;
 import com.project.e_commerce.models.enums.OrderStatus;
 import com.project.e_commerce.enums.ShippingMethod;
 import com.project.e_commerce.models.converters.ShippingMethodConverter;
+import com.project.e_commerce.models.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 

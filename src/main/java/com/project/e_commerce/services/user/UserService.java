@@ -3,7 +3,7 @@ package com.project.e_commerce.services.user;
 
 import com.project.e_commerce.dtos.user.UserDTO;
 
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 
 import com.project.e_commerce.services.user.commands.IUserCommandService;
 import com.project.e_commerce.services.user.queries.IUserQueryService;

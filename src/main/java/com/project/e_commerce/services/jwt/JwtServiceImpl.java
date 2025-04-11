@@ -1,6 +1,6 @@
 package com.project.e_commerce.services.jwt;
 
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -13,7 +13,6 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Function;
 
 @Slf4j

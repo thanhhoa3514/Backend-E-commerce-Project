@@ -7,7 +7,7 @@ import com.project.e_commerce.models.Cart;
 import com.project.e_commerce.models.CartItem;
 //import jakarta.transaction.Transactional;
 import com.project.e_commerce.models.Product;
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.CartItemRepository;
 import com.project.e_commerce.repositories.CartRepository;
 import com.project.e_commerce.repositories.ProductRepository;

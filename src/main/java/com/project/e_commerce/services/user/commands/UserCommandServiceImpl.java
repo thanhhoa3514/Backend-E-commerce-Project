@@ -5,7 +5,7 @@ package com.project.e_commerce.services.user.commands;
 import com.project.e_commerce.dtos.user.UserDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Role;
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.RoleRepository;
 import com.project.e_commerce.repositories.UserRepository;
 import com.project.e_commerce.services.jwt.JwtServiceImpl;

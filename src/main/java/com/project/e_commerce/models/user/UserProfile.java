@@ -2,7 +2,6 @@ package com.project.e_commerce.models.user;
 
 
 import com.project.e_commerce.models.Address;
-import com.project.e_commerce.models.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

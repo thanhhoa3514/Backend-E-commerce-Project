@@ -1,6 +1,6 @@
 package com.project.e_commerce.services.jwt;
 
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 
 public interface IJwtService {
     String generateAccessToken(User user);

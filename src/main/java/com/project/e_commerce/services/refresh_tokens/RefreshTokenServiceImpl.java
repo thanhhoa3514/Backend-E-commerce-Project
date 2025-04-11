@@ -3,7 +3,7 @@ package com.project.e_commerce.services.refresh_tokens;
 
 import com.project.e_commerce.exceptions.TokenRefreshException;
 import com.project.e_commerce.models.RefreshToken;
-import com.project.e_commerce.models.User;
+import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.RefreshTokenRepository;
 import com.project.e_commerce.repositories.UserRepository;
 import jakarta.transaction.Transactional;
