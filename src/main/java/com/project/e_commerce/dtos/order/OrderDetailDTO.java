@@ -1,7 +1,6 @@
-package com.project.e_commerce.dtos;
+package com.project.e_commerce.dtos.order;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 @Data

@@ -1,7 +1,7 @@
 package com.project.e_commerce.services.order.mappers;
 
 
-import com.project.e_commerce.dtos.OrderDTO;
+import com.project.e_commerce.dtos.order.OrderDTO;
 import com.project.e_commerce.models.Order;
 import com.project.e_commerce.responses.OrderResponse;
 import lombok.RequiredArgsConstructor;

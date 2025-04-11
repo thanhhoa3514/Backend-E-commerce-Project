@@ -1,6 +1,6 @@
 package com.project.e_commerce.services.cart.commands;
 
-import com.project.e_commerce.dtos.CartItemDTO;
+import com.project.e_commerce.dtos.cart.CartItemDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.exceptions.InvalidDataException;
 import com.project.e_commerce.models.Cart;
@@ -26,9 +26,6 @@ public class CartCommandServiceImpl implements ICartCommandService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-
-
-
 
 
 

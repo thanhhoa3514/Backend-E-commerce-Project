@@ -1,4 +1,4 @@
-package com.project.e_commerce.dtos;
+package com.project.e_commerce.dtos.cart;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

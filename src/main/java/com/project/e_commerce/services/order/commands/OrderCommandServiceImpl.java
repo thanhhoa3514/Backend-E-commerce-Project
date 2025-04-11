@@ -1,6 +1,6 @@
 package com.project.e_commerce.services.order.commands;
 
-import com.project.e_commerce.dtos.OrderDTO;
+import com.project.e_commerce.dtos.order.OrderDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Order;
 import com.project.e_commerce.models.enums.OrderStatus;

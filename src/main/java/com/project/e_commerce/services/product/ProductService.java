@@ -1,15 +1,10 @@
 package com.project.e_commerce.services.product;
 
-import com.project.e_commerce.dtos.ProductDTO;
-import com.project.e_commerce.dtos.ProductImageDTO;
-import com.project.e_commerce.exceptions.DataNotFoundException;
+import com.project.e_commerce.dtos.product.ProductDTO;
+import com.project.e_commerce.dtos.product.ProductImageDTO;
 import com.project.e_commerce.exceptions.InvalidParamException;
-import com.project.e_commerce.models.Category;
 import com.project.e_commerce.models.Product;
 import com.project.e_commerce.models.ProductImage;
-import com.project.e_commerce.repositories.CategoryRepository;
-import com.project.e_commerce.repositories.ProductImageRepository;
-import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.responses.ProductResponse;
 import com.project.e_commerce.services.product.commands.IProductCommandService;
 import com.project.e_commerce.services.product.queries.IProductQueryService;
@@ -20,8 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service

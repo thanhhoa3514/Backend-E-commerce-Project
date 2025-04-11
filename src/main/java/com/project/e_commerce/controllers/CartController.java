@@ -1,8 +1,8 @@
 package com.project.e_commerce.controllers;
 
 
-import com.project.e_commerce.dtos.CartItemDTO;
-import com.project.e_commerce.dtos.CartResponseDTO;
+import com.project.e_commerce.dtos.cart.CartItemDTO;
+import com.project.e_commerce.dtos.cart.CartResponseDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.services.cart.ICartService;

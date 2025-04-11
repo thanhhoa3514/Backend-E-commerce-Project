@@ -1,8 +1,8 @@
 package com.project.e_commerce.services.product;
 
 
-import com.project.e_commerce.dtos.ProductDTO;
-import com.project.e_commerce.dtos.ProductImageDTO;
+import com.project.e_commerce.dtos.product.ProductDTO;
+import com.project.e_commerce.dtos.product.ProductImageDTO;
 import com.project.e_commerce.exceptions.InvalidParamException;
 import com.project.e_commerce.models.Product;
 import com.project.e_commerce.models.ProductImage;

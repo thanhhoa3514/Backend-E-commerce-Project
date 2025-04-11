@@ -61,6 +61,12 @@ public class SecurityConfig {
                 // Cart: All operations for authenticated users
                 .requestMatchers("/api/v1/cart/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
+
+
+                // Settings : All activities about user will authenticate
+                    .requestMatchers("/api/v1/settings/**").authenticated()
+
+
             )
 
                 .cors(cors -> {

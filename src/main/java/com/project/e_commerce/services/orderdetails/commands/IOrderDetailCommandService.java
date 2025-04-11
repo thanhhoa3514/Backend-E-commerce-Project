@@ -1,6 +1,6 @@
 package com.project.e_commerce.services.orderdetails.commands;
 
-import com.project.e_commerce.dtos.OrderDetailDTO;
+import com.project.e_commerce.dtos.order.OrderDetailDTO;
 import com.project.e_commerce.responses.OrderDetailResponse;
 
 public interface IOrderDetailCommandService {

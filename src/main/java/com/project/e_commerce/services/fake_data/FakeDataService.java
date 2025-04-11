@@ -1,7 +1,7 @@
 package com.project.e_commerce.services.fake_data;
 
 
-import com.project.e_commerce.dtos.ProductDTO;
+import com.project.e_commerce.dtos.product.ProductDTO;
 import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.services.product.ProductService;
 import com.project.e_commerce.utils.FakeDataGeneratorUtil;

@@ -1,6 +1,6 @@
 package com.project.e_commerce.services.cart.queries;
 
-import com.project.e_commerce.dtos.CartItemDTO;
+import com.project.e_commerce.dtos.cart.CartItemDTO;
 import com.project.e_commerce.models.CartItem;
 
 import java.util.List;

@@ -1,12 +1,9 @@
-package com.project.e_commerce.dtos;
+package com.project.e_commerce.dtos.order;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
@@ -15,9 +12,6 @@ import jakarta.validation.constraints.NotNull;
 import com.project.e_commerce.enums.ShippingMethod;
 import jakarta.validation.constraints.Email;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Getter

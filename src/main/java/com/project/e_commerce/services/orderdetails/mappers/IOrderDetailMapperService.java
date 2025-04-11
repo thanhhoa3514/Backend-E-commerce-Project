@@ -1,6 +1,6 @@
 package com.project.e_commerce.services.orderdetails.mappers;
 
-import com.project.e_commerce.dtos.OrderDetailDTO;
+import com.project.e_commerce.dtos.order.OrderDetailDTO;
 import com.project.e_commerce.models.OrderDetail;
 import com.project.e_commerce.responses.OrderDetailResponse;
 

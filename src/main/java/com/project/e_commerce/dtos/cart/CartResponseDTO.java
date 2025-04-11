@@ -1,13 +1,11 @@
-package com.project.e_commerce.dtos;
+package com.project.e_commerce.dtos.cart;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.e_commerce.models.CartItemResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 

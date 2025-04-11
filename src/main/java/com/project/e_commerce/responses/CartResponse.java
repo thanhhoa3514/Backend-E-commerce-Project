@@ -1,6 +1,6 @@
 package com.project.e_commerce.responses;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.e_commerce.dtos.CartItemDTO;
+import com.project.e_commerce.dtos.cart.CartItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

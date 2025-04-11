@@ -1,6 +1,6 @@
 package com.project.e_commerce.services.product.queries;
 
-import com.project.e_commerce.dtos.ProductDTO;
+import com.project.e_commerce.dtos.product.ProductDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Product;
 import com.project.e_commerce.repositories.ProductRepository;

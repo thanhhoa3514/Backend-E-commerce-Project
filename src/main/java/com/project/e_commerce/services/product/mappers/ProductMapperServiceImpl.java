@@ -1,11 +1,10 @@
 package com.project.e_commerce.services.product.mappers;
 
-import com.project.e_commerce.dtos.ProductDTO;
+import com.project.e_commerce.dtos.product.ProductDTO;
 import com.project.e_commerce.models.Product;
 import com.project.e_commerce.repositories.CategoryRepository;
 import com.project.e_commerce.responses.ProductResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.mapper.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package com.project.e_commerce.controllers;
 
-import com.project.e_commerce.dtos.ProductDTO;
+import com.project.e_commerce.dtos.product.ProductDTO;
 
 import com.project.e_commerce.dtos.common.PagedResponseDTO;
 import com.project.e_commerce.models.Product;
