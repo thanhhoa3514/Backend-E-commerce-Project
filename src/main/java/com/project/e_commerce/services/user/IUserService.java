@@ -11,4 +11,6 @@ public interface IUserService {
     User getUserById(long userId);
     String userLogin(String phone, String password) throws Exception;
     Optional<User> findByPhoneNumber(String phoneNumber);
+
+    User getCurrentUser();
 }

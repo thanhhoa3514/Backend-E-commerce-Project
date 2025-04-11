@@ -9,6 +9,9 @@ import com.project.e_commerce.services.user.commands.IUserCommandService;
 import com.project.e_commerce.services.user.queries.IUserQueryService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -46,5 +49,22 @@ public class UserService implements IUserService {
 
     public Optional<User> findByPhoneNumber(String phoneNumber) {
         return userQueryService.findByPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenticationException("User not authenticated") {
+            };
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof User)) {
+            throw new AuthenticationException("Authentication principal is not a User") {
+            };
+        }
+
+        return (User) principal;
     }
 }
