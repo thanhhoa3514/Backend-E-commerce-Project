@@ -31,7 +31,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationServiceImpl implements  IAuthenticationService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -41,6 +41,7 @@ public class AuthenticationService {
     private final AccountLockoutService accountLockoutService;
 
 
+    @Override
     @Transactional
     public Map<String, String> register(UserRegisterDTO registerDTO, HttpServletRequest request) {
         // Validate password strength
@@ -81,6 +82,7 @@ public class AuthenticationService {
         return tokens;
     }
 
+    @Override
     @Transactional
     public Map<String, String> login(UserLoginDTO loginDTO, HttpServletRequest request) {
         try {
@@ -121,6 +123,7 @@ public class AuthenticationService {
         }
     }
 
+    @Override
      public void logout(String token) {
          if (token != null && !token.isEmpty()) {
              // Add token to blacklist

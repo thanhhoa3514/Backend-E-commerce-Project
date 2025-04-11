@@ -7,7 +7,7 @@ import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.models.user.UserProfile;
 import com.project.e_commerce.repositories.UserProfileRepository;
 import com.project.e_commerce.repositories.UserRepository;
-import com.project.e_commerce.services.auth.AuthenticationService;
+import com.project.e_commerce.services.auth.AuthenticationServiceImpl;
 import com.project.e_commerce.services.user.profile.mappers.IUserProfileMapperService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class UserProfileServiceImpl implements  IUserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final UserRepository userRepository;
     private final IUserProfileMapperService userProfileMapperService;
-    private final AuthenticationService authenticationService;
+    private final AuthenticationServiceImpl authenticationServiceImpl;
 
 
     @Override
@@ -44,13 +44,13 @@ public class UserProfileServiceImpl implements  IUserProfileService {
     @Override
     @Transactional(readOnly = true)
     public UserProfileDTO getCurrentUserProfile() {
-        User currentUser = authenticationService.getCurrentUser();
+        User currentUser = authenticationServiceImpl.getCurrentUser();
         return getUserProfileByUserId(currentUser.getId());
     }
 
     @Override
     public UserProfileDTO updateCurrentUserProfile(UserProfileDTO userProfileDTO) {
-        User currentUser = authenticationService.getCurrentUser();
+        User currentUser = authenticationServiceImpl.getCurrentUser();
         return updateUserProfile(currentUser.getId(), userProfileDTO);
     }
     @Transactional

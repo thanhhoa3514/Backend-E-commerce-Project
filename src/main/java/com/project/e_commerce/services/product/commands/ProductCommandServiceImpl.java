@@ -13,12 +13,14 @@ import com.project.e_commerce.repositories.ProductImageRepository;
 import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.services.product.mappers.IProductMapperService;
 import com.project.e_commerce.services.product.valiadation.ProductValidationService;
+import com.project.e_commerce.services.product_image.storage.IProductImageStorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class ProductCommandServiceImpl implements IProductCommandService {
     private final ProductImageRepository productImageRepository;
     private final IProductMapperService productMapperService;
     private final ProductValidationService productValidationService;
+    private final IProductImageStorageService productImageStorageService;
 
     @Override
     @Transactional
@@ -103,7 +106,7 @@ public class ProductCommandServiceImpl implements IProductCommandService {
     }
 
     @Override
-    public void updateProductImages(Long productId, List<MultipartFile> files) {
+    public void updateProductImages(Long productId, List<MultipartFile> files) throws IOException {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new DataNotFoundException("Product not found with id: " + productId));
 
@@ -122,7 +125,7 @@ public class ProductCommandServiceImpl implements IProductCommandService {
             if (file.getSize() == 0) continue;
 
             // Upload file to storage service
-            String imageUrl = fileService.uploadFile(file);
+            String imageUrl = productImageStorageService.storeFile(file);
 
             // Create product image
             ProductImage productImage = ProductImage.builder()

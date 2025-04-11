@@ -10,10 +10,7 @@ import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.responses.AuthResponse;
 
 import com.project.e_commerce.services.TokenBlacklistService;
-import com.project.e_commerce.services.auth.AuthenticationService;
-import com.project.e_commerce.services.jwt.JwtServiceImpl;
-import com.project.e_commerce.services.refresh_tokens.IRefreshTokenService;
-import com.project.e_commerce.services.user.UserService;
+import com.project.e_commerce.services.auth.AuthenticationServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +27,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationService authenticationService;
+    private final AuthenticationServiceImpl authenticationServiceImpl;
 
     private final TokenBlacklistService tokenBlacklistService;
 
@@ -45,7 +42,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody UserLoginDTO loginDTO,
             HttpServletRequest request) {
-        Map<String, String> tokens = authenticationService.login(loginDTO, request);
+        Map<String, String> tokens = authenticationServiceImpl.login(loginDTO, request);
         AuthResponse response = new AuthResponse(
                 tokens.get("access_token"),
                 tokens.get("refresh_token"),
@@ -59,7 +56,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> register(
             @Valid @RequestBody UserRegisterDTO userRegisterDTO,
             HttpServletRequest request) {
-        Map<String, String> tokens = authenticationService.register(userRegisterDTO, request);
+        Map<String, String> tokens = authenticationServiceImpl.register(userRegisterDTO, request);
         AuthResponse response = new AuthResponse(
                 tokens.get("access_token"),
                 tokens.get("refresh_token"),
@@ -77,7 +74,7 @@ public class AuthController {
     @PostMapping("/refresh-token")
     public ResponseEntity<AuthResponse> refreshToken(
             @Valid @RequestBody TokenRefreshRequestDTO refreshDTO) throws DataNotFoundException {
-        Map<String, String> tokens = authenticationService.refreshToken(refreshDTO.getRefreshToken());
+        Map<String, String> tokens = authenticationServiceImpl.refreshToken(refreshDTO.getRefreshToken());
         AuthResponse response = new AuthResponse(
                 tokens.get("access_token"),
                 refreshDTO.getRefreshToken(),
