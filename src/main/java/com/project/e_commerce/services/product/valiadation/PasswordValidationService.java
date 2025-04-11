@@ -1,9 +1,15 @@
 package com.project.e_commerce.services.product.valiadation;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+
+@Service
+@RequiredArgsConstructor
 public class PasswordValidationService {
     private static final int MIN_LENGTH = 8;
     private static final int MAX_LENGTH = 100;

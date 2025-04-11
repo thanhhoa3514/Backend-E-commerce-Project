@@ -39,7 +39,6 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PasswordValidationService passwordValidationService;
     private final AccountLockoutService accountLockoutService;
-//    private final TokenBlacklistService tokenBlacklistService;
 
 
     @Transactional
@@ -82,6 +81,7 @@ public class AuthenticationService {
         return tokens;
     }
 
+    @Transactional
     public Map<String, String> login(UserLoginDTO loginDTO, HttpServletRequest request) {
         try {
             // Check if account is locked before attempting authentication
@@ -121,16 +121,16 @@ public class AuthenticationService {
         }
     }
 
-    // public void logout(String token) {
-    //     if (token != null && !token.isEmpty()) {
-    //         // Add token to blacklist
-    //         tokenBlacklistService.blacklistToken(token);
+     public void logout(String token) {
+         if (token != null && !token.isEmpty()) {
+             // Add token to blacklist
+             tokenBlacklistService.blacklistToken(token);
 
-    //         // Clear security context
-    //         SecurityContextHolder.clearContext();
-    //         log.info("User logged out successfully");
-    //     }
-    // }
+             // Clear security context
+             SecurityContextHolder.clearContext();
+             log.info("User logged out successfully");
+         }
+     }
 
     public Map<String, String> refreshToken(String refreshToken) throws DataNotFoundException {
         if (!jwtService.validateToken(refreshToken)) {

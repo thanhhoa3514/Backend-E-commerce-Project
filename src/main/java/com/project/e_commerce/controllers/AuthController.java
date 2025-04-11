@@ -3,12 +3,12 @@ package com.project.e_commerce.controllers;
 
 import com.project.e_commerce.dtos.TokenRefreshRequestDTO;
 import com.project.e_commerce.dtos.user.UserLoginDTO;
+
 import com.project.e_commerce.dtos.user.UserRegisterDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
-import com.project.e_commerce.exceptions.TokenRefreshException;
-import com.project.e_commerce.models.RefreshToken;
+
 import com.project.e_commerce.responses.AuthResponse;
-import com.project.e_commerce.responses.TokenRefreshResponse;
+
 import com.project.e_commerce.services.TokenBlacklistService;
 import com.project.e_commerce.services.auth.AuthenticationService;
 import com.project.e_commerce.services.jwt.JwtServiceImpl;
@@ -18,14 +18,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 import java.util.Map;
 @Slf4j
 @RestController
@@ -34,13 +31,9 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthenticationService authenticationService;
-    private IRefreshTokenService refreshTokenService;
+
     private final TokenBlacklistService tokenBlacklistService;
 
-    private JwtServiceImpl jwtService;
-
-
-    private UserService userService;
 
     /**
      * Đăng nhập người dùng
@@ -59,6 +52,20 @@ public class AuthController {
                 "Đăng nhập thành công"
         );
         log.info("User logged in: {}", loginDTO.getPhoneNumber());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(
+            @Valid @RequestBody UserRegisterDTO userRegisterDTO,
+            HttpServletRequest request) {
+        Map<String, String> tokens = authenticationService.register(userRegisterDTO, request);
+        AuthResponse response = new AuthResponse(
+                tokens.get("access_token"),
+                tokens.get("refresh_token"),
+                "Đăng nhập thành công"
+        );
+        log.info("User logged in: {}", userRegisterDTO.getPhoneNumber());
         return ResponseEntity.ok(response);
     }
 
