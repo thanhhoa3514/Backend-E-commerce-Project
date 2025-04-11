@@ -60,13 +60,16 @@ public class User extends BaseEntity implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserProfile userProfile;
+
     @Column(name = "is_locked")
     private boolean locked = false;
 
     @Column(name = "locked_until")
     private LocalDateTime lockedUntil;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Settings settings;
 
     @Override
