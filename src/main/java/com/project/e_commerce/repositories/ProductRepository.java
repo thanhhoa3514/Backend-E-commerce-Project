@@ -1,6 +1,9 @@
 package com.project.e_commerce.repositories;
 
 import com.project.e_commerce.models.Product;
+
+import org.springframework.lang.NonNull;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +13,8 @@ import org.springframework.data.repository.query.Param;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Boolean existsByName(String name);
     @Override
-    Page<Product> findAll(Pageable pageable);
+    @NonNull
+    Page<Product> findAll(@NonNull Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE " +
             "(:categoryId IS NULL OR p.category.id = :categoryId) AND " +

@@ -1,7 +1,7 @@
 package com.project.e_commerce.filters;
 import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.UserRepository;
-import com.project.e_commerce.services.TokenBlacklistService;
+import com.project.e_commerce.services.TokenBlacklistServiceImpl;
 import com.project.e_commerce.services.jwt.IJwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,7 +31,7 @@ import java.util.List;
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final IJwtService jwtService;
     private final UserRepository userRepository;
-    private final TokenBlacklistService tokenBlacklistService;
+    private final TokenBlacklistServiceImpl tokenBlacklistServiceImpl;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -41,7 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
-                if (tokenBlacklistService.isTokenBlacklisted(token)) {
+                if (tokenBlacklistServiceImpl.isTokenBlacklisted(token)) {
                     log.warn("Blacklisted token used: {}", token);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("Token has been invalidated");

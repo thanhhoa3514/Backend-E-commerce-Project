@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TokenBlacklistService {
+public class TokenBlacklistServiceImpl implements ITokenBlacklistService {
 
     private final RedisTemplate<String, String> redisTemplate;
     @Value("${jwt.secretKey}")
@@ -30,6 +30,7 @@ public class TokenBlacklistService {
      * Thêm token vào blacklist với thời gian hết hạn tương ứng
      * @param token JWT token cần blacklist
      */
+    @Override
     public void blacklistToken(String token) {
         try {
             // Lấy thời gian hết hạn từ token
@@ -57,6 +58,7 @@ public class TokenBlacklistService {
      * @param token JWT token cần kiểm tra
      * @return true nếu token đã bị blacklist, false nếu không
      */
+    @Override
     public boolean isTokenBlacklisted(String token) {
         String blacklistKey = BLACKLIST_PREFIX + token;
         return redisTemplate.hasKey(blacklistKey);

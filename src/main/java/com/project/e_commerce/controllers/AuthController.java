@@ -9,7 +9,7 @@ import com.project.e_commerce.exceptions.DataNotFoundException;
 
 import com.project.e_commerce.responses.AuthResponse;
 
-import com.project.e_commerce.services.TokenBlacklistService;
+import com.project.e_commerce.services.TokenBlacklistServiceImpl;
 import com.project.e_commerce.services.auth.AuthenticationServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -29,7 +29,7 @@ public class AuthController {
 
     private final AuthenticationServiceImpl authenticationServiceImpl;
 
-    private final TokenBlacklistService tokenBlacklistService;
+    private final TokenBlacklistServiceImpl tokenBlacklistServiceImpl;
 
 
     /**
@@ -94,7 +94,7 @@ public class AuthController {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             // Thêm token vào blacklist
-            tokenBlacklistService.blacklistToken(token);
+            tokenBlacklistServiceImpl.blacklistToken(token);
             // Xóa context bảo mật
             SecurityContextHolder.clearContext();
             log.info("User logged out successfully");

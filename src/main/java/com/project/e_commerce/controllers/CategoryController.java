@@ -1,7 +1,7 @@
 package com.project.e_commerce.controllers;
 
 import com.project.e_commerce.dtos.CategoryDTO;
-import com.project.e_commerce.models.Category;
+
 import com.project.e_commerce.responses.CategoryResponse;
 import com.project.e_commerce.services.category.CategoryService;
 import jakarta.validation.Valid;

@@ -24,6 +24,9 @@ This document outlines the package structure of the e-commerce application, expl
   - **scheduling**: Scheduled tasks
   - **security**: Security-related components
   - **notifications**: Notification-related components
+  - **aspect**: Cross-cutting concerns implemented using AOP
+    - **logging**: Logging aspects for method entry/exit and user activity
+    - **performance**: Performance monitoring aspects for method execution time
 - **common**: Cross-cutting concerns
   - **constants**: Application constants
   - **helpers**: General helper methods
@@ -31,6 +34,16 @@ This document outlines the package structure of the e-commerce application, expl
 - **exceptions**: Custom exception classes
 - **configurations**: Spring configuration classes
 - **filters**: HTTP request/response filters
+
+### Security Package
+
+- **security**: Security-related components
+  - **config**: Security configurations (WebSecurityConfig, SecurityBeanConfig)
+  - **jwt**: JWT token generation, validation, and management
+  - **filter**: Custom security filters (JwtAuthenticationFilter, etc.)
+  - **service**: Security-related services (UserDetailsService implementation)
+  - **model**: Security-specific models (UserPrincipal, etc.)
+  - **handler**: Custom authentication/authorization handlers
 
 ### Domain-Specific Utilities
 
@@ -83,3 +96,30 @@ Domain-specific utilities are placed within their respective domain packages:
 ### Exceptions
 - Exception class names should end with "Exception" (e.g., `InvalidDataException`)
 - All custom exceptions should extend from the same base class (preferably `RuntimeException`)
+
+## Logging Conventions
+
+### User Activity Logging
+- **Essential Information**:
+  - Timestamp (ISO-8601 format)
+  - User ID (from SecurityContextHolder if authenticated)
+  - HTTP Method & Endpoint Path
+  - Client IP Address
+- **Optional Information**:
+  - Request parameters/body (sanitized to mask sensitive data)
+  - Response status code
+  - Execution time
+
+### Performance Logging
+- **Essential Information**:
+  - Timestamp (ISO-8601 format)
+  - Fully qualified method name
+  - Execution time (using StopWatch)
+- **Optional Information**:
+  - Method arguments (sanitized to mask sensitive data)
+  - Warning flags for slow methods (exceeding threshold)
+
+### Logging Format
+- Use structured JSON format for easier parsing and analysis
+- Use appropriate log levels (INFO for normal operations, WARN for slow methods, ERROR for exceptions)
+- Include correlation IDs where possible for request tracing

@@ -9,6 +9,7 @@ import com.project.e_commerce.models.Role;
 import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.RoleRepository;
 import com.project.e_commerce.repositories.UserRepository;
+import com.project.e_commerce.services.ITokenBlacklistService;
 import com.project.e_commerce.services.jwt.IJwtService;
 import com.project.e_commerce.services.product.valiadation.PasswordValidationService;
 import com.project.e_commerce.services.user.AccountLockoutService;
@@ -21,6 +22,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,7 @@ public class AuthenticationServiceImpl implements  IAuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PasswordValidationService passwordValidationService;
     private final AccountLockoutService accountLockoutService;
+    private final ITokenBlacklistService tokenBlacklistService;
 
 
     @Override
