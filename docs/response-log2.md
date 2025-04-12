@@ -87,3 +87,61 @@ The refactoring was tested by:
 4. Verifying error handling by testing with invalid inputs.
 
 This refactoring improves the maintainability and testability of the codebase while ensuring that the product image management functionality continues to work correctly.
+
+## Response on 2023-06-22: Consolidated Validation Logic
+
+### Issue Description
+The application had validation logic scattered across different components, particularly in the product-related services. Some basic validations were performed directly within service methods, while others were delegated to a validation service. This inconsistency could lead to maintenance issues and potential bugs.
+
+### Root Cause Analysis
+- Validation logic was scattered across multiple classes instead of being centralized.
+- Some validations were performed directly in service methods (e.g., `files == null || files.isEmpty()` in `updateProductImages`).
+- The existing `ProductValidationService` was not fully utilized for all product-related validations.
+- Input validation at the controller level was missing, allowing invalid data to reach the service layer.
+
+### Solution Implemented
+1. **Enhanced the ProductDTO with validation annotations:**
+   - Added Jakarta Validation annotations (`@NotBlank`, `@Size`, `@Min`, etc.) to enforce basic constraints.
+   - Added meaningful validation messages to provide clear feedback to API consumers.
+
+2. **Expanded the ProductValidationService:**
+   - Created comprehensive validation methods for products and product images.
+   - Centralized all business rule validations in one place.
+   - Added detailed logging for validation failures.
+
+3. **Updated service implementations to use centralized validation:**
+   - Modified `ProductCommandServiceImpl` to call validation methods before processing data.
+   - Updated `ProductImageCommandServiceImpl` to use the same validation service.
+   - Removed duplicate validation logic from service methods.
+
+4. **Added validation at the controller level:**
+   - Added `@Valid` annotation to controller method parameters to trigger validation.
+   - Created a global exception handler to process validation errors consistently.
+   - Implemented a standardized error response format.
+
+### Benefits of the Consolidation
+1. **Consistent validation:** All product-related validations now follow the same pattern and are applied consistently.
+2. **Improved maintainability:** Validation rules are defined in one place, making them easier to update.
+3. **Better error messages:** Users receive clear, specific error messages when validation fails.
+4. **Reduced duplication:** Eliminated redundant validation code across the application.
+5. **Earlier validation:** Basic validations now happen at the controller level, preventing invalid data from reaching the service layer.
+
+### Best Practices Applied
+1. **Separation of Concerns:** Validation logic is now separate from business logic.
+2. **DRY (Don't Repeat Yourself):** Validation rules are defined once and reused.
+3. **Fail Fast:** Validations occur as early as possible in the request lifecycle.
+4. **Consistent Error Handling:** A global exception handler provides uniform error responses.
+5. **Declarative Validation:** Used annotations for simple validations, reducing boilerplate code.
+
+### Testing Performed
+The validation improvements were tested by:
+1. Submitting valid product data to verify normal operation.
+2. Testing various invalid inputs to ensure appropriate validation errors are returned:
+   - Missing required fields
+   - Values outside of acceptable ranges
+   - Invalid file types and sizes
+   - Non-existent category IDs
+3. Verifying that validation error messages are clear and helpful.
+4. Confirming that validation occurs at both the controller and service levels.
+
+This consolidation of validation logic improves the robustness of the application by ensuring that all data meets the required constraints before being processed, while also making the codebase more maintainable and consistent.

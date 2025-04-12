@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Boolean existsByName(String name);
-
     @Override
     Page<Product> findAll(Pageable pageable);
 

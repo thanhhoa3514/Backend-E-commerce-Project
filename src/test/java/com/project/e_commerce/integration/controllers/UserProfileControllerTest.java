@@ -4,7 +4,6 @@ import com.project.e_commerce.dtos.user.UserProfileDTO;
 import com.project.e_commerce.integration.BaseIntegrationTest;
 import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.models.user.UserProfile;
-import com.project.e_commerce.repositories.UserProfileRepository;
 import com.project.e_commerce.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

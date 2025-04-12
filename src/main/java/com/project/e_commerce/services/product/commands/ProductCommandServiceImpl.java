@@ -3,7 +3,6 @@ package com.project.e_commerce.services.product.commands;
 import com.project.e_commerce.dtos.product.ProductDTO;
 import com.project.e_commerce.dtos.product.ProductImageDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
-import com.project.e_commerce.exceptions.InvalidDataException;
 import com.project.e_commerce.exceptions.InvalidParamException;
 import com.project.e_commerce.models.Category;
 import com.project.e_commerce.models.Product;
@@ -13,6 +12,7 @@ import com.project.e_commerce.repositories.ProductImageRepository;
 import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.services.product.mappers.IProductMapperService;
 import com.project.e_commerce.services.product.valiadation.ProductValidationService;
+import com.project.e_commerce.services.product_image.commands.IProductImageCommandService;
 import com.project.e_commerce.services.product_image.storage.IProductImageStorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Service
@@ -35,6 +35,7 @@ public class ProductCommandServiceImpl implements IProductCommandService {
     private final IProductMapperService productMapperService;
     private final ProductValidationService productValidationService;
     private final IProductImageStorageService productImageStorageService;
+    private final IProductImageCommandService productImageCommandService;
 
     @Override
     @Transactional
@@ -42,10 +43,8 @@ public class ProductCommandServiceImpl implements IProductCommandService {
         productValidationService.validateName(productDTO.getName());
         productValidationService.validatePrice(productDTO.getPrice());
         productValidationService.validateQuantity(productDTO.getQuantity());
+        productValidationService.validateProductDTO(productDTO);
 
-        if (productDTO.getCategoryId() == null) {
-            throw new InvalidParamException("Category ID must be provided");
-        }
 
         Category category = categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(() -> new DataNotFoundException(
@@ -107,39 +106,15 @@ public class ProductCommandServiceImpl implements IProductCommandService {
 
     @Override
     public void updateProductImages(Long productId, List<MultipartFile> files) throws IOException {
+        productValidationService.validateProductImages(files);
+        // Find the product - this is still the responsibility of the ProductCommandService
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new DataNotFoundException("Product not found with id: " + productId));
 
-        // Validate files
-        if (files == null || files.isEmpty()) {
-            throw new InvalidDataException("No image files provided");
-        }
+        // Delegate the image update operation to the specialized service
+        productImageCommandService.updateAllProductImages(existingProduct, files);
 
-        // Delete existing images
-        productImageRepository.deleteByProductId(productId);
-
-        // Upload and save new images
-        List<ProductImage> productImages = new ArrayList<>();
-
-        for (MultipartFile file : files) {
-            if (file.getSize() == 0) continue;
-
-            // Upload file to storage service
-            String imageUrl = productImageStorageService.storeFile(file);
-
-            // Create product image
-            ProductImage productImage = ProductImage.builder()
-                    .product(existingProduct)
-                    .imageUrl(imageUrl)
-                    .build();
-
-            productImages.add(productImage);
-        }
-
-        if (!productImages.isEmpty()) {
-            productImageRepository.saveAll(productImages);
-            log.info("Updated images for product with ID: {}", productId);
-        }
+        log.info("Updated images for product with ID: {}", productId);
     }
 
 
