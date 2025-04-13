@@ -2,6 +2,7 @@ package com.project.e_commerce.configurations;
 
 import com.project.e_commerce.filters.JwtTokenFilter;
 import com.project.e_commerce.filters.RateLimitingFilter;
+import com.project.e_commerce.services.auth.oauth2.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
     private final AuthenticationProvider authenticationProvider;
     private final RateLimitingFilter rateLimitingFilter;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -73,6 +75,9 @@ public class SecurityConfig {
             )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
                         .defaultSuccessUrl("/api/v1/auth/success", true)
                         .failureUrl("/login?error=true")
                 )

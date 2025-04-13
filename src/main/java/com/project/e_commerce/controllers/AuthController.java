@@ -9,13 +9,16 @@ import com.project.e_commerce.exceptions.DataNotFoundException;
 
 import com.project.e_commerce.responses.AuthResponse;
 
+import com.project.e_commerce.security.CustomOAuth2User;
 import com.project.e_commerce.services.TokenBlacklistServiceImpl;
 import com.project.e_commerce.services.auth.AuthenticationServiceImpl;
+import com.project.e_commerce.services.jwt.IJwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,6 +35,7 @@ public class AuthController {
     private final AuthenticationServiceImpl authenticationServiceImpl;
 
     private final TokenBlacklistServiceImpl tokenBlacklistServiceImpl;
+    private final IJwtService jwtService;
 
 
     /**
@@ -119,7 +123,14 @@ public class AuthController {
     }
 
     @GetMapping("/success")
-    public OAuth2User getUser(@AuthenticationPrincipal OAuth2User principal) {
-        return principal;
+    public ResponseEntity<?> getUser(@AuthenticationPrincipal CustomOAuth2User customUser) {
+        if (customUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User authentication failed"));
+        }
+        String token = jwtService.generateAccessToken(customUser);
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "user", customUser.getAttributes()
+        ));
     }
 }

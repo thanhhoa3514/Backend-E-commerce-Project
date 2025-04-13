@@ -1,5 +1,6 @@
 package com.project.e_commerce.services.auth.oauth2;
 
+import com.project.e_commerce.enums.AuthProvider;
 import com.project.e_commerce.exceptions.OAuth2AuthenticationProcessingException;
 import com.project.e_commerce.models.Role;
 import com.project.e_commerce.models.SocialAccount;
@@ -9,6 +10,7 @@ import com.project.e_commerce.repositories.SocialAccountRepository;
 import com.project.e_commerce.security.OAuth2UserInfo;
 import com.project.e_commerce.security.CustomOAuth2User;
 import com.project.e_commerce.repositories.UserRepository;
+import com.project.e_commerce.security.OAuth2UserInfoFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +48,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
     private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
         String registrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId();
-        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());
+        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory
+                .getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());
         if (!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
