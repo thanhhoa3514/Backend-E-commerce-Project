@@ -1,6 +1,7 @@
 package com.project.e_commerce.models;
 
 
+import com.project.e_commerce.models.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,4 +29,9 @@ public class SocialAccount {
 
     @Column(name = "provider_id")
     private Long providerId;
+
+
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private User user;
 }

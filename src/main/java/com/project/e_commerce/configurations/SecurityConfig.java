@@ -38,6 +38,9 @@ public class SecurityConfig {
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+
+                    // authorization with oauth2
+                    .requestMatchers(HttpMethod.POST, "/oauth2/**").permitAll()
                     .requestMatchers("/api/v1/auth/validate-token").authenticated()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // Products: GET for all, POST/PUT/DELETE for admin only
@@ -68,6 +71,11 @@ public class SecurityConfig {
 
 
             )
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/api/v1/auth/success", true)
+                        .failureUrl("/login?error=true")
+                )
 
                 .cors(cors -> {
                     CorsConfiguration configuration = new CorsConfiguration();

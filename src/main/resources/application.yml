@@ -44,6 +44,23 @@ security:
   account:
     max-failed-attempts: 5
     lockout-duration-minutes: 30
+
+  oauth2:
+    client:
+      registration:
+        google:
+          client-id: ${GOOGLE_CLIENT_ID}
+          client-secret: ${GOOGLE_CLIENT_SECRET}
+          scope: profile,email
+          redirect-uri: "{baseUrl}/api/v1/login/oauth2/code/google"
+        facebook:
+          client-id: ${FACEBOOK_CLIENT_ID}
+          client-secret: ${FACEBOOK_CLIENT_SECRET}
+          scope: email,public_profile
+          redirect-uri: "{baseUrl}/api/v1/login/oauth2/code/facebook"
+      provider:
+        facebook:
+          user-info-uri: https://graph.facebook.com/me?fields=id,name,email
 jwt:
   expiration: ${JWT_EXPIRATION} # seconds
   secretKey: ${JWT_SECRET_KEY}

@@ -51,10 +51,10 @@ public class User extends BaseEntity implements UserDetails {
 
 
     @Column(name = "facebook_account_id")
-    private long facebookAccountId;
+    private Long facebookAccountId;
 
     @Column(name = "google_account_id")
-    private long googleAccountId;
+    private Long googleAccountId;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
