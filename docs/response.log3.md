@@ -44,3 +44,30 @@ With these changes, the application can now:
 - Appropriate exceptions are thrown for authentication failures
 
 This implementation enhances the application's authentication capabilities while maintaining security and providing a seamless user experience.
+
+## Stripe Webhook Integration Summary
+
+## What Was Implemented
+
+1. **Stripe Webhook Endpoint:**
+   - Created `StripeWebhookController` to handle Stripe webhook events for `payment_intent.succeeded` and `payment_intent.payment_failed`.
+   - Endpoint verifies the Stripe signature for security.
+
+2. **Payment & Order Status Update:**
+   - On `payment_intent.succeeded`, the associated `Payment` record is updated to `SUCCESS` and the `Order` status is set to `PAID`.
+   - On `payment_intent.payment_failed`, the `Payment` record is updated to `FAILED` with error info.
+
+3. **Entity Improvements:**
+   - Implemented the `Payment` entity with fields for order, paymentIntentId, clientSecret, status, failure info, createdAt, and updatedAt.
+
+4. **Best Practices:**
+   - Webhook endpoint is protected by Stripe signature verification.
+   - Status changes are transactional and idempotent.
+
+## Next Steps / Testing
+- Run the application and use Stripe CLI or dashboard to send test webhook events.
+- Check that payment and order statuses update accordingly in the database.
+
+---
+
+If you need further details, see the implementation in `StripeWebhookController.java` and the updated `Payment` entity.

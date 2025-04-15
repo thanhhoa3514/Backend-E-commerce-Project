@@ -10,11 +10,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentRequest {
-    private Long amount;
+public class PaymentResponseDTO {
+    @JsonProperty("payment_intent_id")
+    private String paymentIntentId;
 
-    @JsonProperty("payment_method_id")
-    private String paymentMethodId;
+    @JsonProperty("client_secret")
+    private String clientSecret;
 
-    private String currency;
+    private String status;
+
+    private String message;
 }

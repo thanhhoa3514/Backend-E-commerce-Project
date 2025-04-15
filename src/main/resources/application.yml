@@ -35,10 +35,16 @@ api:
   prefix: /api/v1
 stripe:
   secret:
-    key: your_stripe_secret_key
+    key: ${STRIPE_SECRET_KEY}
   public:
-    key: your_stripe_public_key
-
+    key: ${STRIPE_PUBLIC_KEY}
+  webhook:
+    secret: ${STRIPE_WEBHOOK_SECRET}
+  currency:
+    unit: usd,vnd
+  payment:
+    method: card,bank_transfer
+    currency: usd,vnd
 
 security:
   account:
