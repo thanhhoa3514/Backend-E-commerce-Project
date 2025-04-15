@@ -26,34 +26,34 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDataNotFoundException(DataNotFoundException ex, WebRequest request) {
         logger.error("Resource not found: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(),
-                LocalDateTime.now(),
-                request.getDescription(false)
-        );
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false))
+                .build();
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(InvalidParamException.class)
     public ResponseEntity<ErrorResponse> handleInvalidParamException(InvalidParamException ex, WebRequest request) {
         logger.error("Invalid parameter: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                LocalDateTime.now(),
-                request.getDescription(false)
-        );
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false))
+                .build();
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
         logger.error("Authentication failed: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.UNAUTHORIZED.value(),
-                ex.getMessage(),
-                LocalDateTime.now(),
-                request.getDescription(false)
-        );
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false))
+                .build();
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
     @ExceptionHandler(PaymentProcessingException.class)
@@ -93,13 +93,13 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation failed",
-                LocalDateTime.now(),
-                request.getDescription(false),
-                errors
-        );
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Validation failed")
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false))
+                .validationErrors(errors)
+                .build();
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
@@ -107,48 +107,48 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
         logger.error("Constraint violation: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                LocalDateTime.now(),
-                request.getDescription(false)
-        );
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false))
+                .build();
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidFileException.class)
     public ResponseEntity<ErrorResponse> handleInvalidFileException(InvalidFileException ex, WebRequest request) {
         logger.error("Invalid file: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                LocalDateTime.now(),
-                request.getDescription(false)
-        );
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false))
+                .build();
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(TokenRefreshException.class)
     public ResponseEntity<ErrorResponse> handleTokenRefreshException(TokenRefreshException ex, WebRequest request) {
         logger.error("Token refresh error: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.FORBIDDEN.value(),
-                ex.getMessage(),
-                LocalDateTime.now(),
-                request.getDescription(false)
-        );
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false))
+                .build();
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
         logger.error("Unexpected error occurred: ", ex);
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "An unexpected error occurred",
-                LocalDateTime.now(),
-                request.getDescription(false)
-        );
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message("An unexpected error occurred")
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false))
+                .build();
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -167,11 +167,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(),
-                LocalDateTime.now()
-        );
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 

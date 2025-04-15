@@ -42,8 +42,7 @@ class UserProfileControllerTest extends BaseIntegrationTest {
         testUser = new User();
         testUser.setEmail("test@example.com");
         testUser.setPassword("password");
-        testUser.setFirstName("Test");
-        testUser.setLastName("User");
+
         testUser = userRepository.save(testUser);
 
         // Create test user profile
