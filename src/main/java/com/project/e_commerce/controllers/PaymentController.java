@@ -20,6 +20,12 @@ public class PaymentController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{paymentIntentId}")
+    public ResponseEntity<PaymentResponseDTO> getPaymentStatus(@PathVariable String paymentIntentId) {
+        PaymentResponseDTO response = paymentService.getPaymentStatus(paymentIntentId);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/confirm/{paymentIntentId}")
     public ResponseEntity<PaymentResponseDTO> confirmPayment(@PathVariable String paymentIntentId) {
         PaymentResponseDTO response = paymentService.confirmPayment(paymentIntentId);

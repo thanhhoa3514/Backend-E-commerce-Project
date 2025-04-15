@@ -56,29 +56,27 @@ public class PaymentService implements IPaymentService {
         if (paymentRepository.existsByOrderAndStatus(order, PaymentStatus.SUCCESS) /* ||
              paymentRepository.existsByOrderAndStatus(order, PaymentStatus.PENDING) */) { // Reconsider PENDING check
             log.warn("Payment already successfully processed for order ID: {}", order.getId());
-            // Decide: Return existing success details or throw specific exception?
-            // Returning existing details might be better than throwing an error here.
-            // Example: Find the existing successful payment and return its details.
+
             Payment existingPayment = paymentRepository.findByOrderAndStatus(order, PaymentStatus.SUCCESS)
                     .orElseThrow(() -> new PaymentProcessingException("Inconsistent state: Payment success exists but cannot be retrieved.")); // Should not happen
             log.info("Returning existing successful PaymentIntent {} for order {}", existingPayment.getPaymentIntentId(), order.getId());
+            
+            // We don't return client secret for existing payments - it was already used
             return PaymentResponseDTO.builder()
                     .paymentIntentId(existingPayment.getPaymentIntentId())
-                    .clientSecret(existingPayment.getClientSecret()) // Might be null/empty if retrieved later, handle carefully client-side
                     .status(existingPayment.getStatus().name())
                     .message("Payment already successfully completed for this order.")
                     .build();
-            // Original: throw new PaymentProcessingException("Payment already processed or pending for this order.");
         }
 
         // 3. Prepare Stripe Request - Good use of builder pattern
         try {
             // Use defaults, consider making them configurable if needed
             String currency = paymentRequestDTO.getCurrency() != null ? paymentRequestDTO.getCurrency().toLowerCase() : "usd";
-            String paymentMethodType = paymentRequestDTO.getPaymentMethodType() != null ? paymentRequestDTO.getPaymentMethodType() : "card";
+            String paymentMethodType = paymentRequestDTO.getPaymentMethodId() != null ? paymentRequestDTO.getPaymentMethodType() : "card";
 
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount((long) (order.getTotalMoney() * 100)) // Correct conversion to cents
+                    .setAmount((long) (order.getTotalPrice() * 100)) // Correct conversion to cents
                     .setCurrency(currency)
                     .addPaymentMethodType(paymentMethodType) // Use addPaymentMethodType for flexibility
                     .putMetadata("order_id", String.valueOf(order.getId())) // Good practice
@@ -88,13 +86,16 @@ public class PaymentService implements IPaymentService {
 
             // 4. Create Stripe PaymentIntent
             PaymentIntent paymentIntent = PaymentIntent.create(params);
+            
+            // Get the client secret but DON'T store it
+            String clientSecret = paymentIntent.getClientSecret();
 
             // 5. Persist Local Payment Record - Essential for tracking
             Payment payment = Payment.builder()
                     .order(order)
                     .paymentIntentId(paymentIntent.getId())
-                    .clientSecret(paymentIntent.getClientSecret()) // Store client secret for frontend
-                    .amount(order.getTotalMoney()) // Store original amount
+                    // Client secret is deliberately not stored for security
+                    .amount(order.getTotalPrice()) // Store original amount
                     .currency(paymentIntent.getCurrency()) // Store actual currency used
                     .status(PaymentStatus.PENDING) // Correct initial status
                     .paymentMethodType(paymentIntent.getPaymentMethodTypes().get(0)) // Store actual method used
@@ -105,10 +106,10 @@ public class PaymentService implements IPaymentService {
 
             log.info("Created PaymentIntent {} (Status: {}) for order {}", paymentIntent.getId(), paymentIntent.getStatus(), order.getId());
 
-            // 6. Return Response DTO - Clear response for client
+            // 6. Return Response DTO with client secret (only for new payments)
             return PaymentResponseDTO.builder()
                     .paymentIntentId(paymentIntent.getId())
-                    .clientSecret(paymentIntent.getClientSecret())
+                    .clientSecret(clientSecret) // Return it to client but don't persist
                     .status(payment.getStatus().name()) // Return PENDING status
                     .message("PaymentIntent created successfully. Awaiting client confirmation.")
                     .build();
@@ -125,6 +126,124 @@ public class PaymentService implements IPaymentService {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public PaymentResponseDTO getPaymentStatus(String paymentIntentId) {
+        try {
+            // First check our local database
+            Payment payment = paymentRepository.findByPaymentIntentId(paymentIntentId)
+                    .orElseThrow(() -> new DataNotFoundException("Payment not found with ID: " + paymentIntentId));
+            
+            // For the most up-to-date status, also check with Stripe
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
+            
+            // Update local record if the status has changed
+            PaymentStatus stripeStatus = mapStripeStatus(paymentIntent.getStatus());
+            if (payment.getStatus() != stripeStatus) {
+                payment.setStatus(stripeStatus);
+                payment.setUpdatedAt(LocalDateTime.now());
+                paymentRepository.save(payment);
+            }
+            
+            return PaymentResponseDTO.builder()
+                    .paymentIntentId(paymentIntent.getId())
+                    .status(payment.getStatus().name())
+                    .message("Payment status retrieved successfully")
+                    .build();
+            
+        } catch (StripeException e) {
+            log.error("Stripe error retrieving PaymentIntent {}: {}", paymentIntentId, e.getMessage(), e);
+            throw new PaymentProcessingException("Payment provider error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("Error retrieving PaymentIntent {}: {}", paymentIntentId, e.getMessage(), e);
+            throw new PaymentProcessingException("An unexpected error occurred while retrieving payment status.", e);
+        }
+    }
+    
+    // Helper method to map Stripe status to our enum
+    private PaymentStatus mapStripeStatus(String stripeStatus) {
+        switch (stripeStatus) {
+            case "succeeded":
+                return PaymentStatus.SUCCESS;
+            case "requires_action":
+                return PaymentStatus.REQUIRES_ACTION;
+            case "requires_payment_method":
+                return PaymentStatus.FAILED;
+            case "canceled":
+                return PaymentStatus.CANCELED;
+            default:
+                return PaymentStatus.PENDING;
+        }
+    }
+
+    @Override
+    @Transactional
+    public PaymentResponseDTO confirmPayment(String paymentIntentId) {
+        try {
+            // Retrieve the PaymentIntent from Stripe
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
+            
+            // Confirm the PaymentIntent (if it's not already confirmed)
+            if (!"succeeded".equals(paymentIntent.getStatus())) {
+                paymentIntent = paymentIntent.confirm();
+            }
+            
+            // Update the local payment record
+            Payment payment = paymentRepository.findByPaymentIntentId(paymentIntentId)
+                    .orElseThrow(() -> new DataNotFoundException("Payment not found with ID: " + paymentIntentId));
+            
+            // Update payment status based on Stripe response
+            payment.setStatus(mapStripeStatus(paymentIntent.getStatus()));
+            payment.setUpdatedAt(LocalDateTime.now());
+            paymentRepository.save(payment);
+            
+            return PaymentResponseDTO.builder()
+                    .paymentIntentId(paymentIntent.getId())
+                    .status(payment.getStatus().name())
+                    .message("Payment " + payment.getStatus().name().toLowerCase())
+                    .build();
+            
+        } catch (StripeException e) {
+            log.error("Stripe error confirming PaymentIntent {}: {}", paymentIntentId, e.getMessage(), e);
+            throw new PaymentProcessingException("Payment provider error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("Error confirming PaymentIntent {}: {}", paymentIntentId, e.getMessage(), e);
+            throw new PaymentProcessingException("An unexpected error occurred while confirming payment.", e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public PaymentResponseDTO cancelPayment(String paymentIntentId) {
+        try {
+            // Retrieve the PaymentIntent from Stripe
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
+            
+            // Cancel the PaymentIntent
+            PaymentIntent canceledIntent = paymentIntent.cancel();
+            
+            // Update the local payment record
+            Payment payment = paymentRepository.findByPaymentIntentId(paymentIntentId)
+                    .orElseThrow(() -> new DataNotFoundException("Payment not found with ID: " + paymentIntentId));
+            
+            payment.setStatus(PaymentStatus.CANCELED);
+            payment.setUpdatedAt(LocalDateTime.now());
+            paymentRepository.save(payment);
+            
+            return PaymentResponseDTO.builder()
+                    .paymentIntentId(canceledIntent.getId())
+                    .status(PaymentStatus.CANCELED.name())
+                    .message("Payment canceled successfully")
+                    .build();
+            
+        } catch (StripeException e) {
+            log.error("Stripe error canceling PaymentIntent {}: {}", paymentIntentId, e.getMessage(), e);
+            throw new PaymentProcessingException("Payment provider error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("Error canceling PaymentIntent {}: {}", paymentIntentId, e.getMessage(), e);
+            throw new PaymentProcessingException("An unexpected error occurred while canceling payment.", e);
+        }
+    }
 
     // --- CRITICAL MISSING PIECES ---
     /*

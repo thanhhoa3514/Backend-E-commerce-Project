@@ -24,8 +24,14 @@ public class Payment {
     @Column(name = "payment_intent_id", unique = true)
     private String paymentIntentId;
 
-    @Column(name = "client_secret")
-    private String clientSecret;
+    @Column(name = "amount")
+    private Double amount;
+
+    @Column(name = "currency")
+    private String currency;
+
+    @Column(name = "payment_method_type")
+    private String paymentMethodType;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;

@@ -17,4 +17,10 @@ public class PaymentRequestDTO {
     private String paymentMethodId;
 
     private String currency;
+    
+    @JsonProperty("order_id")
+    private Long orderId;
+    
+    @JsonProperty("payment_method_type")
+    private String paymentMethodType;
 }

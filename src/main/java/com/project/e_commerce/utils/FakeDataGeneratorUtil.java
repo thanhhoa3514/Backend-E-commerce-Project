@@ -29,8 +29,8 @@ public class FakeDataGeneratorUtil {
         user.setDateOfBirth(faker.date().birthday().toInstant()
             .atZone(ZoneId.systemDefault())
             .toLocalDate());
-        user.setFacebookAccountId(faker.random().nextInt(100));
-        user.setGoogleAccountId(faker.random().nextInt(100));
+        // user.setFacebookAccountId(faker.random().nextInt(100));
+        // user.setGoogleAccountId(faker.random().nextInt(100));
 
         return user;
     }
