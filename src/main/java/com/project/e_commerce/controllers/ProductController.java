@@ -146,7 +146,7 @@ public class ProductController {
         }
     }
     @GetMapping("/search")
-    public ResponseEntity<PagedResponseDTO<ProductDTO>> searchProducts(
+    public ResponseEntity<PagedResponseDTO<ProductResponse>> searchProducts(
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
@@ -161,10 +161,10 @@ public class ProductController {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
 
-        Page<ProductDTO> productPage = productService.searchProducts(
+        Page<ProductResponse> productPage = productService.searchProducts(
                 categoryId, minPrice, maxPrice, keyword, pageable);
 
-        PagedResponseDTO<ProductDTO> response = PagedResponseDTO.<ProductDTO>builder()
+        PagedResponseDTO<ProductResponse> response = PagedResponseDTO.<ProductResponse>builder()
                 .content(productPage.getContent())
                 .currentPage(productPage.getNumber())
                 .totalItems(productPage.getTotalElements())

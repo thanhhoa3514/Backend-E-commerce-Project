@@ -1,5 +1,6 @@
 package com.project.e_commerce.filters;
 
+import com.project.e_commerce.configurations.RateLimitingConfig;
 import io.github.bucket4j.Bucket;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,14 +13,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Map;
-
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class RateLimitingFilter extends OncePerRequestFilter {
-    private final Map<String, Bucket> ipBucketMap;
+    private final RateLimitingConfig rateLimitingConfig;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -28,7 +27,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         if (isAuthEndpoint(requestURI)) {
             String clientIP = getClientIP(request);
-            Bucket bucket = ipBucketMap.computeIfAbsent(clientIP, k -> bucketSupplier.get());
+            Bucket bucket = rateLimitingConfig.resolveBucket(clientIP);
 
             if (bucket.tryConsume(1)) {
                 // Request allowed, proceed with the filter chain
@@ -43,8 +42,8 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             // Not an auth endpoint, proceed normally
             filterChain.doFilter(request, response);
         }
-
     }
+
     private boolean isAuthEndpoint(String uri) {
         return uri.contains("/api/v1/users/login") ||
                 uri.contains("/api/v1/users/register") ||

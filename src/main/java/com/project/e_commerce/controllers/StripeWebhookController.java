@@ -82,7 +82,7 @@ public class StripeWebhookController {
                 // Optionally update order status
                 Order order = payment.getOrder();
                 if (order != null) {
-                    order.setOrderStatus(com.project.e_commerce.models.enums.OrderStatus.PAID);
+                    order.setOrderStatus(com.project.e_commerce.models.enums.OrderStatus.COMPLETED);
                     orderRepository.save(order);
                 }
                 log.info("Webhook: Updated payment status to SUCCESS for PaymentIntent {}", paymentIntentId);

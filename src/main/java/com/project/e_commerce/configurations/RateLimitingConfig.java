@@ -2,10 +2,10 @@ package com.project.e_commerce.configurations;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.context.annotation.Configuration;
+
 
 import java.time.Duration;
 import java.util.Map;
@@ -14,18 +14,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Configuration
 public class RateLimitingConfig {
 
-    @Bean
-    public Map<String, Bucket> buckets() {
-        return new ConcurrentHashMap<>();
+    private final Map<String, Bucket> ipBucketMap = new ConcurrentHashMap<>();
+
+    public Bucket resolveBucket(String ipAddress) {
+        return ipBucketMap.computeIfAbsent(ipAddress, k -> createBucket());
     }
 
-    public Bucket resolveBucket(String key) {
-        return buckets().computeIfAbsent(key, this::newBucket);
+    private Bucket createBucket() {
+        // Allow 5 requests initially and refill 1 token every 10 seconds
+        Bandwidth limit = Bandwidth.classic(5, Refill.greedy(1, Duration.ofSeconds(10)));
+        return Bucket.builder().addLimit(limit).build();
     }
-
-    private Bucket newBucket(String key) {
-        return Bucket4j.builder()
-                .addLimit(Bandwidth.classic(100, Refill.greedy(100, Duration.ofMinutes(1))))
-                .build();
-    }
-}
+} 
