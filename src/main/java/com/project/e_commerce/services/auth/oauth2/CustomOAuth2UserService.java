@@ -55,14 +55,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
 
-        // First check if we have a social account with this email and provider
-        Optional<SocialAccount> socialAccountOptional = socialAccountRepository.findByEmailAndProvider(
-                oAuth2UserInfo.getEmail(), registrationId);
+        // First check if we have a social account with this provider and providerId
+        // This is more efficient than searching by email + provider
+        Long providerId = parseProviderId(oAuth2UserInfo.getId());
+        SocialAccount socialAccount = socialAccountRepository.findByProviderAndProviderId(
+                registrationId, providerId);
         
         User user;
-        if (socialAccountOptional.isPresent()) {
+        if (socialAccount != null) {
             // Social account exists, get the associated user and update account
-            SocialAccount socialAccount = socialAccountOptional.get();
             user = socialAccount.getUser();
             updateExistingSocialAccount(socialAccount, oAuth2UserInfo);
         } else {
