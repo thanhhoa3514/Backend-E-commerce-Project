@@ -1,16 +1,32 @@
 package com.project.e_commerce.unit.services;
 
+import com.project.e_commerce.dtos.user.UserProfileDTO;
 import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.models.user.UserProfile;
+import com.project.e_commerce.repositories.UserProfileRepository;
 import com.project.e_commerce.repositories.UserRepository;
+import com.project.e_commerce.services.user.profile.UserProfileServiceImpl;
+import com.project.e_commerce.services.user.profile.mappers.IUserProfileMapperService;
 import com.project.e_commerce.unit.BaseUnitTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 public class UserProfileServiceTest extends BaseUnitTest {
 
-//    @Mock
-//    private UserProfileRepository userProfileRepository;
+    @Mock
+    private UserProfileRepository userProfileRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -19,11 +35,11 @@ public class UserProfileServiceTest extends BaseUnitTest {
     private IUserProfileMapperService userProfileMapperService;
 
     @InjectMocks
-//    private UserProfileServiceImpl userProfileService;
+    private UserProfileServiceImpl userProfileService;
 
     private User testUser;
     private UserProfile testUserProfile;
-//    private UserProfileDTO testUserProfileDTO;
+    private UserProfileDTO testUserProfileDTO;
 
 
     @BeforeEach

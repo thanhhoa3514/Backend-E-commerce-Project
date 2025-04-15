@@ -4,10 +4,12 @@ package com.project.e_commerce.models;
 import com.project.e_commerce.models.enums.OrderStatus;
 import com.project.e_commerce.enums.ShippingMethod;
 import com.project.e_commerce.models.converters.ShippingMethodConverter;
+import com.project.e_commerce.models.coupons.Coupon;
 import com.project.e_commerce.models.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -74,4 +76,14 @@ public class Order extends BaseEntity{
     @Column(name = "status")
     @Convert(converter = OrderStatusConverter.class)
     private OrderStatus orderStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
+
+    @Column(name = "discount_amount", precision = 10, scale = 2, columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
+    @Column(name = "final_amount", precision = 10, scale = 2)
+    private BigDecimal finalAmount;
 }
