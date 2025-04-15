@@ -76,7 +76,7 @@ public class ProductService implements IProductService {
 
     @Cacheable(value = "productSearch",
             key = "#categoryId + '_' + #minPrice + '_' + #maxPrice + '_' + #keyword + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort")
-    public Page<ProductDTO> searchProducts(
+    public Page<ProductResponse> searchProducts(
             Long categoryId,
             Double minPrice,
             Double maxPrice,
@@ -86,6 +86,6 @@ public class ProductService implements IProductService {
         Page<Product> products = productRepository.searchProducts(
                 categoryId, minPrice, maxPrice, keyword, pageable);
 
-        return productMapperService.mapToProductResponse(products);
+        return productMapperService.mapToProductResponsePage(products);
     }
 }

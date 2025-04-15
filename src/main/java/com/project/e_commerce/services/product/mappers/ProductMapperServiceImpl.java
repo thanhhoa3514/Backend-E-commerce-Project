@@ -6,9 +6,12 @@ import com.project.e_commerce.repositories.CategoryRepository;
 import com.project.e_commerce.responses.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +68,16 @@ public class ProductMapperServiceImpl implements  IProductMapperService {
         if (productDTO.getThumbnail() != null) {
             product.setThumbnail(productDTO.getThumbnail());
         }
+    }
+
+    @Override
+    public Page<ProductResponse> mapToProductResponsePage(Page<Product> products) {
+        return new PageImpl<>(
+                products.getContent().stream()
+                        .map(this::mapToProductResponse)
+                        .collect(Collectors.toList()),
+                products.getPageable(),
+                products.getTotalElements()
+        );
     }
 }
