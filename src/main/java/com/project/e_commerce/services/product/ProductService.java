@@ -12,6 +12,7 @@ import com.project.e_commerce.services.product.mappers.IProductMapperService;
 import com.project.e_commerce.services.product.queries.IProductQueryService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +35,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    @Cacheable(value = "products", key = "#productId")
     public Product getProductById(long productId) {
 
         return productQueryService.getProductById(productId);
@@ -46,11 +48,13 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "productSearch"}, key = "#productId")
     public Product updateProduct(long productId, ProductDTO productDTO) {
         return productCommandService.updateProduct(productId, productDTO);
     }
 
     @Override
+    @CacheEvict(value = {"products", "productSearch"}, key = "#productId")
     public void deleteProduct(long productId) {
         productCommandService.deleteProduct(productId);
     }

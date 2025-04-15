@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class OrderService implements  IOrderService{
 
     @Override
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Transactional
     public OrderResponse createOrder(OrderDTO orderDTO) {
 
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
