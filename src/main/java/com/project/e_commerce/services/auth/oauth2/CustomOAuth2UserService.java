@@ -46,6 +46,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new InternalAuthenticationServiceException(ex.getMessage(), ex.getCause());
         }
     }
+    
     private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
         String registrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId();
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory
@@ -54,46 +55,91 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
 
-        Optional<User> userOptional = userRepository.findByUserEmail(oAuth2UserInfo.getEmail());
+        // First check if we have a social account with this email and provider
+        Optional<SocialAccount> socialAccountOptional = socialAccountRepository.findByEmailAndProvider(
+                oAuth2UserInfo.getEmail(), registrationId);
+        
         User user;
-        if (userOptional.isPresent()) {
-            user = userOptional.get();
-            if (!user.getProvider().equals(AuthProvider.valueOf(registrationId.toUpperCase()))) {
-                throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
-                        user.getProvider() + " account. Please use your " + user.getProvider() +
-                        " account to login.");
-            }
-            user = updateExistingUser(user, oAuth2UserInfo);
+        if (socialAccountOptional.isPresent()) {
+            // Social account exists, get the associated user and update account
+            SocialAccount socialAccount = socialAccountOptional.get();
+            user = socialAccount.getUser();
+            updateExistingSocialAccount(socialAccount, oAuth2UserInfo);
         } else {
-            user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
+            // Check if user exists with this email
+            Optional<User> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
+            
+            if (userOptional.isPresent()) {
+                // User exists but no social account for this provider
+                user = userOptional.get();
+                createSocialAccountForUser(user, oAuth2UserRequest, oAuth2UserInfo);
+            } else {
+                // New user, register both user and social account
+                user = registerNewUserWithSocialAccount(oAuth2UserRequest, oAuth2UserInfo);
+            }
         }
 
         return CustomOAuth2User.create(user, oAuth2User.getAttributes());
     }
 
-    private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
+    private User registerNewUserWithSocialAccount(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         String registrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId();
+        
+        // Create new user
         User user = User.builder()
-                .provider(AuthProvider.valueOf(registrationId.toUpperCase()))
-                .providerId(oAuth2UserInfo.getId())
                 .fullName(oAuth2UserInfo.getName())
                 .email(oAuth2UserInfo.getEmail())
-                .imageUrl(oAuth2UserInfo.getImageUrl())
-                // .active(true) // Assuming new OAuth users are active by default
+                .phoneNumber("") // This might need to be handled differently as it's required but OAuth might not provide it
+                .password("") // OAuth users don't need a password
+                .isActive(true)
                 .build();
 
         // Assign default role
         Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         user.setRole(userRole);
-
-        return userRepository.save(user);
+        
+        user = userRepository.save(user);
+        
+        // Create associated social account
+        createSocialAccountForUser(user, oAuth2UserRequest, oAuth2UserInfo);
+        
+        return user;
+    }
+    
+    private void createSocialAccountForUser(User user, OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
+        String registrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId();
+        
+        SocialAccount socialAccount = SocialAccount.builder()
+                .user(user)
+                .email(oAuth2UserInfo.getEmail())
+                .name(oAuth2UserInfo.getName())
+                .provider(registrationId)
+                .providerId(parseProviderId(oAuth2UserInfo.getId()))
+                .build();
+        
+        socialAccountRepository.save(socialAccount);
     }
 
-    private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
-        existingUser.setFullName(oAuth2UserInfo.getName());
-        existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
+    private Long parseProviderId(String id) {
+        try {
+            return Long.valueOf(id);
+        } catch (NumberFormatException e) {
+            // Some providers might use non-numeric IDs
+            // In this case, we can use a hash code or other alternative
+            log.warn("Non-numeric provider ID: {}. Using hash code instead.", id);
+            return (long) id.hashCode();
+        }
+    }
+
+    private void updateExistingSocialAccount(SocialAccount socialAccount, OAuth2UserInfo oAuth2UserInfo) {
+        socialAccount.setName(oAuth2UserInfo.getName());
         // Update other fields if necessary
-        return userRepository.save(existingUser);
+        socialAccountRepository.save(socialAccount);
+        
+        // Also update user's name if needed
+        User user = socialAccount.getUser();
+        user.setFullName(oAuth2UserInfo.getName());
+        userRepository.save(user);
     }
 }

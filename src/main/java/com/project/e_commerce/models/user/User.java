@@ -2,6 +2,7 @@ package com.project.e_commerce.models.user;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.project.e_commerce.enums.AuthProvider;
 import com.project.e_commerce.models.BaseEntity;
 import com.project.e_commerce.models.Role;
 import jakarta.persistence.*;
