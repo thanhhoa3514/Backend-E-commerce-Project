@@ -2,6 +2,7 @@ package com.project.e_commerce.models.coupons;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.e_commerce.enums.DiscountType;
+import com.project.e_commerce.models.Category;
 import jakarta.persistence.*;
 import lombok.*;
 

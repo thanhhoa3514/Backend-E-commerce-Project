@@ -148,7 +148,7 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public BigDecimal calculateDiscount(String couponCode, Order order) {
         Coupon coupon = getCouponByCode(couponCode);
-        BigDecimal orderTotal = order.getTotalAmount();
+        BigDecimal orderTotal = order.getFinalAmount();
         BigDecimal discount = BigDecimal.ZERO;
         
         // Apply main coupon discount
@@ -183,7 +183,7 @@ public class CouponServiceImpl implements CouponService {
         if ("minimum_amount".equals(condition.getAttribute())) {
             BigDecimal minAmount = new BigDecimal(condition.getValue());
             if (">".equals(condition.getOperator())) {
-                return order.getTotalAmount().compareTo(minAmount) > 0;
+                return order.getFinalAmount().compareTo(minAmount) > 0;
             }
         }
         // Add more condition evaluations as needed
@@ -199,8 +199,12 @@ public class CouponServiceImpl implements CouponService {
         String couponCode = request.getCouponCode();
         
         // Check if coupon is valid
-        if (!isValid(couponCode, order.getUser().getId(), order.getTotalAmount())) {
-            throw new InvalidParamException("Coupon is not valid for this order");
+        if (!isValid(couponCode, order.getUser().getId(), order.getFinalAmount())) {
+            try {
+                throw new InvalidParamException("Coupon is not valid for this order");
+            } catch (InvalidParamException e) {
+                throw new RuntimeException(e);
+            }
         }
         
         // Calculate discount
@@ -208,7 +212,7 @@ public class CouponServiceImpl implements CouponService {
         
         // Apply discount to order
         order.setDiscountAmount(discount);
-        order.setFinalAmount(order.getTotalAmount().subtract(discount));
+        order.setFinalAmount(order.getFinalAmount().subtract(discount));
         
         // Increment coupon usage count
         Coupon coupon = getCouponByCode(couponCode);
