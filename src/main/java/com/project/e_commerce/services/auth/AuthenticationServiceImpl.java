@@ -9,7 +9,7 @@ import com.project.e_commerce.models.Role;
 import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.RoleRepository;
 import com.project.e_commerce.repositories.UserRepository;
-import com.project.e_commerce.services.ITokenBlacklistService;
+import com.project.e_commerce.services.token.ITokenBlacklistService;
 import com.project.e_commerce.services.jwt.IJwtService;
 import com.project.e_commerce.services.product.valiadation.PasswordValidationService;
 import com.project.e_commerce.services.user.AccountLockoutService;

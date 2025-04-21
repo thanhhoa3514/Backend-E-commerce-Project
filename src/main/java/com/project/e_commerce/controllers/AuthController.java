@@ -10,7 +10,7 @@ import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.responses.AuthResponse;
 
 import com.project.e_commerce.security.CustomOAuth2User;
-import com.project.e_commerce.services.TokenBlacklistServiceImpl;
+import com.project.e_commerce.services.token.TokenBlacklistServiceImpl;
 import com.project.e_commerce.services.auth.AuthenticationServiceImpl;
 import com.project.e_commerce.services.jwt.IJwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 @Slf4j

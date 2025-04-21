@@ -1,5 +1,6 @@
 package com.project.e_commerce.exceptions;
 
+import com.project.e_commerce.responses.ApiResponse;
 import com.project.e_commerce.responses.ErrorResponseDTO;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -186,4 +188,14 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
-}
+
+
+        @ExceptionHandler(RateLimitExceededException.class)
+        public ResponseEntity<ApiResponse> handleRateLimitExceeded(RateLimitExceededException ex) {
+            ApiResponse response = ApiResponse.builder()
+                    .status(HttpStatus.TOO_MANY_REQUESTS.value())
+                    .message(ex.getMessage())
+                    .build();
+            return new ResponseEntity<>(response, HttpStatus.TOO_MANY_REQUESTS);
+        }
+    }
