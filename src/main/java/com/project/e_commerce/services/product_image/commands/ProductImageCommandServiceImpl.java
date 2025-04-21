@@ -13,6 +13,7 @@ import com.project.e_commerce.services.product_image.storage.IProductImageStorag
 import com.project.e_commerce.services.product_image.validation.ProductImageValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ import java.util.List;
 @Slf4j
 public class ProductImageCommandServiceImpl implements IProductImageCommandService{
 
-
+    @Lazy
     private final ProductService productService;
     private final ProductValidationService productValidationService;
     private final IProductImageStorageService storageService;

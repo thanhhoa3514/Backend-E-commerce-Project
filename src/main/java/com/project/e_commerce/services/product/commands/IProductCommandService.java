@@ -16,5 +16,5 @@ public interface IProductCommandService {
     Product updateProduct(long productId, ProductDTO productDTO);
     void deleteProduct(long productId);
     ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO)throws InvalidParamException;
-    void updateProductImages(Long productId, List<MultipartFile> files) throws IOException;
+
 }

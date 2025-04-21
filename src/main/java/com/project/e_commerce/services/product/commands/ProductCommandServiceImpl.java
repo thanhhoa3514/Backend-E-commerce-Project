@@ -34,7 +34,7 @@ public class ProductCommandServiceImpl implements IProductCommandService {
     private final ProductImageRepository productImageRepository;
     private final IProductMapperService productMapperService;
     private final ProductValidationService productValidationService;
-    private final IProductImageStorageService productImageStorageService;
+
     private final IProductImageCommandService productImageCommandService;
 
     @Override
@@ -103,19 +103,4 @@ public class ProductCommandServiceImpl implements IProductCommandService {
 
         return productImageRepository.save(productImage);
     }
-
-    @Override
-    public void updateProductImages(Long productId, List<MultipartFile> files) throws IOException {
-        productValidationService.validateProductImages(files);
-        // Find the product - this is still the responsibility of the ProductCommandService
-        Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new DataNotFoundException("Product not found with id: " + productId));
-
-        // Delegate the image update operation to the specialized service
-        productImageCommandService.updateAllProductImages(existingProduct, files);
-
-        log.info("Updated images for product with ID: {}", productId);
-    }
-
-
 }
