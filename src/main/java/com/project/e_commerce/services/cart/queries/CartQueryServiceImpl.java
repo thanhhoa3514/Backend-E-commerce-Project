@@ -32,7 +32,7 @@ public class CartQueryServiceImpl implements ICartQueryService {
         }
 
         // Get cart items
-        List<CartItem> cartItems = cartItemRepository.findAllByUserId(userId);
+        List<CartItem> cartItems = cartItemRepository.findAllByCartUserId(userId);
 
         // Map to DTOs
         return cartItems.stream()
@@ -43,7 +43,7 @@ public class CartQueryServiceImpl implements ICartQueryService {
     @Override
     @Transactional(readOnly = true)
     public CartItem findCartItemById(Long cartItemId, Long userId) {
-        return cartItemRepository.findByIdAndUserId(cartItemId, userId)
+        return cartItemRepository.findByIdAndCartUserId(cartItemId, userId)
                 .orElseThrow(() -> new DataNotFoundException("Cart item not found with id: " + cartItemId));
     }
 

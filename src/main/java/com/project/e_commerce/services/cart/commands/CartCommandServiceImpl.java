@@ -76,7 +76,7 @@ public class CartCommandServiceImpl implements ICartCommandService {
     @Transactional
     public void updateCartItem(Long cartItemId, CartItemDTO cartItemDTO, Long userId) {
         // Find cart item
-        CartItem cartItem = cartItemRepository.findByIdAndUserId(cartItemId, userId)
+        CartItem cartItem = cartItemRepository.findByIdAndCartUserId(cartItemId, userId)
                 .orElseThrow(() -> new DataNotFoundException("Cart item not found with id: " + cartItemId));
 
         // Validate quantity
@@ -94,7 +94,7 @@ public class CartCommandServiceImpl implements ICartCommandService {
     @Transactional
     public void removeFromCart(Long cartItemId, Long userId) {
         // Find cart item
-        CartItem cartItem = cartItemRepository.findByIdAndUserId(cartItemId, userId)
+        CartItem cartItem = cartItemRepository.findByIdAndCartUserId(cartItemId, userId)
                 .orElseThrow(() -> new DataNotFoundException("Cart item not found with id: " + cartItemId));
 
         // Remove from cart
@@ -110,7 +110,7 @@ public class CartCommandServiceImpl implements ICartCommandService {
         }
 
         // Clear all cart items for user
-        cartItemRepository.deleteByUserId(userId);
+        cartItemRepository.deleteByCartUserId(userId);
         log.info("Cleared cart for user: {}", userId);
     }
 }
