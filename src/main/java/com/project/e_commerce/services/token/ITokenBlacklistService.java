@@ -1,4 +1,4 @@
-package com.project.e_commerce.services;
+package com.project.e_commerce.services.token;
 
 public interface ITokenBlacklistService {
     void blacklistToken(String token);
