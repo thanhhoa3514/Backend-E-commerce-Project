@@ -11,7 +11,7 @@ import com.project.e_commerce.repositories.UserRepository;
 import com.project.e_commerce.services.user.UserService;
 import com.project.e_commerce.services.user.profile.mappers.IUserProfileMapperService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.AuthenticationException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserProfileServiceImpl implements  IUserProfileService {
 
     private final UserProfileRepository userProfileRepository;
-    private final UserRepository userRepository;
+
     private final IUserProfileMapperService userProfileMapperService;
     private final UserService userService;
 
