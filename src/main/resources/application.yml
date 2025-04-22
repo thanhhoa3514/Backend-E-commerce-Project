@@ -25,6 +25,11 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
+
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+    default-locale: en
   data:
     redis:
       host: ${REDIS_HOST}
@@ -38,12 +43,12 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
-      group-id: your-consumer-group
+      group-id: e-commerce-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: com.project.e_commerce.model
+        spring.json.trusted.packages: com.project.e_commerce.model,com.project.e_commerce.dtos
 api:
   prefix: /api/v1
 stripe:
