@@ -1,30 +1,25 @@
 package com.project.e_commerce.responses;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthResponse {
-    @JsonProperty("access_token")
-    private String accessToken;
-
-    @JsonProperty("refresh_token")
-    private String refreshToken;
-
+    @JsonProperty("message")
     private String message;
 
-    private Boolean valid;
+    @JsonProperty("status")
+    private HttpStatus status;
 
-    public AuthResponse(String accessToken, String refreshToken, String message) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-        this.message = message;
-    }
+    @JsonProperty("data")
+    private Object data;
 }

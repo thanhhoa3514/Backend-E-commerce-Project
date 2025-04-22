@@ -46,7 +46,7 @@ public class AuthenticationServiceImpl implements  IAuthenticationService {
 
     @Override
     @Transactional
-    public Map<String, String> register(UserRegisterDTO registerDTO, HttpServletRequest request) {
+    public User register(UserRegisterDTO registerDTO, HttpServletRequest request) {
         // Validate password strength
         List<String> passwordErrors = passwordValidationService.validatePassword(registerDTO.getPassword());
         if (!passwordErrors.isEmpty()) {
@@ -75,14 +75,7 @@ public class AuthenticationServiceImpl implements  IAuthenticationService {
         userRepository.save(newUser);
         log.info("User registered successfully: {}", newUser.getPhoneNumber());
 
-        // Generate tokens
-        String accessToken = jwtService.generateAccessToken(newUser);
-        String refreshToken = jwtService.generateRefreshToken(newUser);
-
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", accessToken);
-        tokens.put("refresh_token", refreshToken);
-        return tokens;
+        return newUser;
     }
 
     @Override

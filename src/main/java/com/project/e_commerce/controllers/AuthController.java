@@ -7,12 +7,15 @@ import com.project.e_commerce.dtos.user.UserLoginDTO;
 import com.project.e_commerce.dtos.user.UserRegisterDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 
+import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.responses.AuthResponse;
 
 import com.project.e_commerce.security.CustomOAuth2User;
 import com.project.e_commerce.services.token.TokenBlacklistServiceImpl;
 import com.project.e_commerce.services.auth.AuthenticationServiceImpl;
 import com.project.e_commerce.services.jwt.IJwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,31 +48,31 @@ public class AuthController {
      * @return JWT tokens
      */
     @PostMapping("/login")
+    @Operation(summary = "User login", description = "Authenticate user and return tokens")
     public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody UserLoginDTO loginDTO,
             HttpServletRequest request) {
         Map<String, String> tokens = authenticationServiceImpl.login(loginDTO, request);
-        AuthResponse response = new AuthResponse(
-                tokens.get("access_token"),
-                tokens.get("refresh_token"),
-                "Đăng nhập thành công"
-        );
         log.info("User logged in: {}", loginDTO.getPhoneNumber());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(AuthResponse.builder()
+                .message("Đăng nhập thành công")
+                .status(HttpStatus.OK)
+                .data(tokens)
+                .build());
     }
 
     @PostMapping("/register")
+    @Operation(summary = "User registration", description = "Register a new user without logging in")
     public ResponseEntity<AuthResponse> register(
             @Valid @RequestBody UserRegisterDTO userRegisterDTO,
             HttpServletRequest request) {
-        Map<String, String> tokens = authenticationServiceImpl.register(userRegisterDTO, request);
-        AuthResponse response = new AuthResponse(
-                tokens.get("access_token"),
-                tokens.get("refresh_token"),
-                "Đăng nhập thành công"
-        );
-        log.info("User logged in: {}", userRegisterDTO.getPhoneNumber());
-        return ResponseEntity.ok(response);
+        User registeredUser = authenticationServiceImpl.register(userRegisterDTO, request);
+        log.info("User registered: {}", userRegisterDTO.getPhoneNumber());
+        return ResponseEntity.ok(AuthResponse.builder()
+                .message("Đăng ký thành công. Vui lòng đăng nhập.")
+                .status(HttpStatus.CREATED)
+                .data(Map.of("phoneNumber", registeredUser.getPhoneNumber()))
+                .build());
     }
 
     /**
@@ -77,15 +81,17 @@ public class AuthController {
      * @return access token mới
      */
     @PostMapping("/refresh-token")
+    @Operation(summary = "Refresh access token", 
+              description = "Generate a new access token using refresh token",
+              security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<AuthResponse> refreshToken(
             @Valid @RequestBody TokenRefreshRequestDTO refreshDTO) throws DataNotFoundException {
         Map<String, String> tokens = authenticationServiceImpl.refreshToken(refreshDTO.getRefreshToken());
-        AuthResponse response = new AuthResponse(
-                tokens.get("access_token"),
-                refreshDTO.getRefreshToken(),
-                "Token đã được làm mới"
-        );
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(AuthResponse.builder()
+                .message("Token đã được làm mới")
+                .status(HttpStatus.OK)
+                .data(tokens)
+                .build());
     }
 
     /**
@@ -94,6 +100,10 @@ public class AuthController {
      * @return thông báo đăng xuất thành công
      */
     @PostMapping("/logout")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @Operation(summary = "User logout", 
+              description = "Invalidate the current token and log out the user",
+              security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<AuthResponse> logout(
             @RequestHeader("Authorization") String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -104,7 +114,11 @@ public class AuthController {
             SecurityContextHolder.clearContext();
             log.info("User logged out successfully");
         }
-        return ResponseEntity.ok(new AuthResponse(null, null, "Đăng xuất thành công"));
+        return ResponseEntity.ok(AuthResponse.builder()
+                .message("Đăng xuất thành công")
+                .status(HttpStatus.OK)
+                .data(null)
+                .build());
     }
 
     /**
@@ -112,24 +126,50 @@ public class AuthController {
      * @return kết quả kiểm tra
      */
     @GetMapping("/validate-token")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @Operation(summary = "Validate token", 
+              description = "Check if the current token is valid",
+              security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<AuthResponse> validateToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isValid = authentication != null && authentication.isAuthenticated()
                 && !"anonymousUser".equals(authentication.getPrincipal());
 
         String message = isValid ? "Token hợp lệ" : "Token không hợp lệ";
-        return ResponseEntity.ok(new AuthResponse(null, null, message, isValid));
+        Map<String, Boolean> validationResult = Map.of("valid", isValid);
+        
+        return ResponseEntity.ok(AuthResponse.builder()
+                .message(message)
+                .status(HttpStatus.OK)
+                .data(validationResult)
+                .build());
     }
 
     @GetMapping("/success")
-    public ResponseEntity<?> getUser(@AuthenticationPrincipal CustomOAuth2User customUser) {
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @Operation(summary = "Get authenticated user details", 
+              description = "Return details of the authenticated OAuth2 user",
+              security = { @SecurityRequirement(name = "bearer-key") })
+    public ResponseEntity<AuthResponse> getUser(@AuthenticationPrincipal CustomOAuth2User customUser) {
         if (customUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User authentication failed"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                AuthResponse.builder()
+                    .message("User authentication failed")
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .data(null)
+                    .build()
+            );
         }
         String token = jwtService.generateAccessToken(customUser);
-        return ResponseEntity.ok(Map.of(
+        Map<String, Object> userData = Map.of(
                 "token", token,
                 "user", customUser.getAttributes()
-        ));
+        );
+        
+        return ResponseEntity.ok(AuthResponse.builder()
+                .message("Authentication successful")
+                .status(HttpStatus.OK)
+                .data(userData)
+                .build());
     }
 }
