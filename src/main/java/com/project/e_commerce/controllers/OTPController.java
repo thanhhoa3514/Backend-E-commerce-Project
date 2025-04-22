@@ -34,11 +34,21 @@ public class OTPController {
     @PostMapping("/verify")
     public ResponseEntity<ApiResponse> verifyOTP(@Valid @RequestBody OTPVerifyRequestDTO request) {
         boolean verified = otpService.verifyOTP(request.getEmail(), request.getCode(), request.getType());
-        return ResponseEntity.ok(
-                ApiResponse.builder()
-                        .status(HttpStatus.OK.value())
-                        .message("OTP verified successfully")
-                        .build()
-        );
+        
+        if (verified) {
+            return ResponseEntity.ok(
+                    ApiResponse.builder()
+                            .status(HttpStatus.OK.value())
+                            .message("OTP verified successfully")
+                            .build()
+            );
+        } else {
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.builder()
+                            .status(HttpStatus.BAD_REQUEST.value())
+                            .message("OTP verification failed")
+                            .build()
+            );
+        }
     }
 }
