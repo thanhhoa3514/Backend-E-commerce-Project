@@ -1,50 +1,48 @@
 package com.project.e_commerce.configurations;
 
-
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.servers.Server;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-
 @Configuration
-@RequiredArgsConstructor
+@OpenAPIDefinition(
+        info = @Info(
+                title = "E-commerce Application API",
+                version = "1.0",
+                description = "This API exposes endpoints for the E-commerce application.",
+                contact = @Contact(
+                        name = "E-commerce API Support",
+                        email = "support@ecommerce.com",
+                        url = "https://www.ecommerce.com"
+                ),
+                license = @License(
+                        name = "MIT License",
+                        url = "https://choosealicense.com/licenses/mit/"
+                ),
+                termsOfService = "https://www.ecommerce.com/terms"
+        ),
+        servers = {
+                @Server(url = "http://localhost:8088", description = "Local Development Server"),
+                @Server(url = "http://45.117.179.16:8088", description = "Production Server")
+        },
+        security = {
+                @SecurityRequirement(name = "bearer-key")
+        }
+)
+@SecurityScheme(
+        name = "bearer-key",
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT",
+        in = SecuritySchemeIn.HEADER
+)
 public class OpenApiConfig {
-    @Value("${server.port}")
-    private String serverPort;
-
-    @Bean
-    public OpenAPI myOpenAPI() {
-        Server devServer = new Server();
-        devServer.setUrl("http://localhost:" + serverPort);
-        devServer.setDescription("Server URL in Development environment");
-
-        Server prodServer = new Server();
-        prodServer.setUrl("https://e-commerce-api.example.com");
-        prodServer.setDescription("Server URL in Production environment");
-
-        Contact contact = new Contact();
-        contact.setEmail("support@ecommerce.com");
-        contact.setName("E-commerce API Support");
-        contact.setUrl("https://www.ecommerce.com");
-
-        License mitLicense = new License().name("MIT License").url("https://choosealicense.com/licenses/mit/");
-
-        Info info = new Info()
-                .title("E-commerce Application API")
-                .version("1.0")
-                .contact(contact)
-                .description("This API exposes endpoints for the E-commerce application.")
-                .termsOfService("https://www.ecommerce.com/terms")
-                .license(mitLicense);
-
-        return new OpenAPI().info(info).servers(List.of(devServer, prodServer));
-    }
+    
 }
