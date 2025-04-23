@@ -6,6 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -17,4 +21,10 @@ public class ProductImageService implements IProductImageService {
     public List<ProductImage> uploadProductImages(Long productId, List<MultipartFile> multipartFiles) {
         return productImageCommandService.uploadProductImages(productId, multipartFiles);
     }
+
+    @Override
+    public void deleteFile(String filename) throws IOException {
+        productImageCommandService.deleteFile(filename);
+    }
+
 }
