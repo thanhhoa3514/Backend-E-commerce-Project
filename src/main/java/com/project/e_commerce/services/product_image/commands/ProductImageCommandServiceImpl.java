@@ -20,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +38,7 @@ public class ProductImageCommandServiceImpl implements IProductImageCommandServi
     private final ProductValidationService productValidationService;
     private final IProductImageStorageService storageService;
     private final ProductImageValidationService productImageValidationService;
+    private static final String UPLOADS_FOLDER = "uploads";
 
     @Override
     public List<ProductImage> uploadProductImages(Long productId, List<MultipartFile> multipartFiles) {
@@ -93,5 +97,21 @@ public class ProductImageCommandServiceImpl implements IProductImageCommandServi
         }
 
         return productImages;
+    }
+
+    @Override
+    public void deleteFile(String filename) throws IOException {
+        // Đường dẫn đến thư mục chứa file
+        java.nio.file.Path uploadDir = Paths.get(UPLOADS_FOLDER);
+        // Đường dẫn đầy đủ đến file cần xóa
+        java.nio.file.Path filePath = uploadDir.resolve(filename);
+
+        // Kiểm tra xem file tồn tại hay không
+        if (Files.exists(filePath)) {
+            // Xóa file
+            Files.delete(filePath);
+        } else {
+            throw new FileNotFoundException("File not found: " + filename);
+        }
     }
 }
