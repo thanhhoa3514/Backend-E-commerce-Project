@@ -1,6 +1,8 @@
 package com.project.e_commerce.models;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.e_commerce.models.enums.OrderStatus;
 import com.project.e_commerce.enums.ShippingMethod;
 import com.project.e_commerce.models.converters.ShippingMethodConverter;
@@ -11,6 +13,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -77,8 +80,15 @@ public class Order extends BaseEntity{
     @Convert(converter = OrderStatusConverter.class)
     private OrderStatus orderStatus;
 
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<OrderDetail> orderDetails;
+
+
     @ManyToOne
-    @JoinColumn(name = "coupon_id")
+    @JoinColumn(name = "coupon_id", nullable = true)
+    @JsonBackReference
     private Coupon coupon;
 
     @Column(name = "discount_amount", precision = 10, scale = 2, columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
