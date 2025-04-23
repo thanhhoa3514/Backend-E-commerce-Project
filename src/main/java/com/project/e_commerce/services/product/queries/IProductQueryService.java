@@ -12,10 +12,11 @@ import java.util.List;
 public interface IProductQueryService {
 
     Product getProductById(long productId);
-    Page<ProductResponse> getAllProducts(PageRequest pageRequest);
+    Page<ProductResponse> getAllProducts(String keyword,
+                                         Long categoryId, PageRequest pageRequest);
     boolean existsByName(String name);
     List<Product> findAll();
     Page<ProductDTO> findAllWithPagination(String keyword, Long categoryId, Pageable pageable);
-
+    List<Product> findProductsByIds(List<Long> productIds);
     boolean existsById(Long id);
 }

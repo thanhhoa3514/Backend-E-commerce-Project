@@ -34,8 +34,10 @@ public class ProductQueryServiceImpl implements IProductQueryService {
     }
 
     @Override
-    public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
-        Page<Product> productsPage = productRepository.findAll(pageRequest);
+    public Page<ProductResponse> getAllProducts(String keyword,
+                                                Long categoryId, PageRequest pageRequest) {
+        Page<Product> productsPage;
+        productsPage = productRepository.searchProducts(categoryId, keyword, pageRequest);
         return productsPage.map(productMapperService::mapToProductResponse);
     }
 
@@ -61,5 +63,9 @@ public class ProductQueryServiceImpl implements IProductQueryService {
     @Transactional(readOnly = true)
     public boolean existsById(Long id) {
         return false;
+    }
+    @Override
+    public List<Product> findProductsByIds(List<Long> productIds) {
+        return productRepository.findProductsByIds(productIds);
     }
 }
