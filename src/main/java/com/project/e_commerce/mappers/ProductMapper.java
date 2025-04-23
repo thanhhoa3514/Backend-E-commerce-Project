@@ -1,6 +1,6 @@
 package com.project.e_commerce.mappers;
 
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 import com.project.e_commerce.responses.ProductResponse;
 import org.springframework.stereotype.Component;
 

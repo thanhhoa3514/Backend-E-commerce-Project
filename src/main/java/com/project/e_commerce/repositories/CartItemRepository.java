@@ -2,7 +2,7 @@ package com.project.e_commerce.repositories;
 
 import com.project.e_commerce.models.Cart;
 import com.project.e_commerce.models.CartItem;
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

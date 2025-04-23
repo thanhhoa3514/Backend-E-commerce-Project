@@ -5,7 +5,7 @@ import com.project.e_commerce.dtos.order.OrderDetailDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.Order;
 import com.project.e_commerce.models.OrderDetail;
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 import com.project.e_commerce.repositories.OrderDetailRepository;
 import com.project.e_commerce.repositories.OrderRepository;
 import com.project.e_commerce.repositories.ProductRepository;

@@ -3,7 +3,7 @@ package com.project.e_commerce.services.product;
 import com.project.e_commerce.dtos.product.ProductDTO;
 import com.project.e_commerce.dtos.product.ProductImageDTO;
 import com.project.e_commerce.exceptions.InvalidParamException;
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 import com.project.e_commerce.models.ProductImage;
 import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.responses.ProductResponse;
@@ -16,7 +16,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

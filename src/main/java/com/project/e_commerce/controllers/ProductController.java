@@ -2,21 +2,15 @@ package com.project.e_commerce.controllers;
 
 import com.project.e_commerce.components.LocalizationUtils;
 
-import com.project.e_commerce.dtos.product.ProductImageDTO;
 import com.project.e_commerce.dtos.product.ProductDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.exceptions.InvalidParamException;
-import com.project.e_commerce.models.Product;
-import com.project.e_commerce.models.ProductImage;
-import com.project.e_commerce.models.user.User;
+import com.project.e_commerce.models.product.Product;
 import com.project.e_commerce.responses.AuthResponse;
 import com.project.e_commerce.responses.ProductListResponse;
 import com.project.e_commerce.responses.ProductResponse;
-import com.project.e_commerce.services.redis.products.IProductRedisService;
 import com.project.e_commerce.services.product.IProductService;
 
-
-import com.project.e_commerce.utils.MessageKeys;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -35,10 +29,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

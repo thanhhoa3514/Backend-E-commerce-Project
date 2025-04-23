@@ -1,13 +1,12 @@
 package com.project.e_commerce.services.wishlist.command;
 
 import com.project.e_commerce.exceptions.DataNotFoundException;
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 import com.project.e_commerce.models.Wishlist;
 import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.repositories.UserRepository;
 import com.project.e_commerce.repositories.WishlistRepository;
-import com.project.e_commerce.services.wishlist.IWishListService;
 import com.project.e_commerce.services.wishlist.queries.IWishListQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

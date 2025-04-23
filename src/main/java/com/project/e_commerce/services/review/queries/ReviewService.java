@@ -5,7 +5,7 @@ import com.project.e_commerce.dtos.review.ReviewRequestDTO;
 import com.project.e_commerce.dtos.review.ReviewResponseDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.exceptions.InvalidDataException;
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 import com.project.e_commerce.models.Review;
 import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.repositories.ProductRepository;

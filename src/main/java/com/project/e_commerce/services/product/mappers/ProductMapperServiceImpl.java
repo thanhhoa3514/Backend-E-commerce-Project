@@ -1,7 +1,7 @@
 package com.project.e_commerce.services.product.mappers;
 
 import com.project.e_commerce.dtos.product.ProductDTO;
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 import com.project.e_commerce.repositories.CategoryRepository;
 import com.project.e_commerce.responses.ProductResponse;
 import lombok.RequiredArgsConstructor;

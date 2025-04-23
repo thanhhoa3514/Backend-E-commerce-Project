@@ -1,6 +1,7 @@
 package com.project.e_commerce.models;
 
 
+import com.project.e_commerce.models.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
 

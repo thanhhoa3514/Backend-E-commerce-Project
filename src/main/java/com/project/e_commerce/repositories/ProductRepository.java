@@ -1,7 +1,7 @@
 package com.project.e_commerce.repositories;
 
 import com.project.e_commerce.models.Category;
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 
 import org.springframework.lang.NonNull;
 

@@ -1,9 +1,14 @@
-package com.project.e_commerce.models;
+package com.project.e_commerce.models.product;
 
+import com.project.e_commerce.models.BaseEntity;
+import com.project.e_commerce.models.Category;
+import com.project.e_commerce.models.ProductImage;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.List;
 
 
 @Entity
@@ -13,6 +18,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Table(name = "products")
+//Event-driven approach with Spring Data JPA
+//@EntityListeners(ProductListener.class)
 public class Product extends BaseEntity {
     @Column(name = "name", nullable = false,length = 350)
     private String name;
@@ -39,4 +46,9 @@ public class Product extends BaseEntity {
     @JoinColumn(name="category_id")
     private Category categoryId;
 
+
+    @OneToMany(mappedBy = "product",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private List<ProductImage> productImages;
 }

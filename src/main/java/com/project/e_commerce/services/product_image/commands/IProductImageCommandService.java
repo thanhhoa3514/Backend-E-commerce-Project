@@ -1,6 +1,6 @@
 package com.project.e_commerce.services.product_image.commands;
 
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 import com.project.e_commerce.models.ProductImage;
 import org.springframework.web.multipart.MultipartFile;
 

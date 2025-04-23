@@ -3,9 +3,8 @@ package com.project.e_commerce.services.product_image.commands;
 import com.project.e_commerce.dtos.product.ProductImageDTO;
 
 import com.project.e_commerce.exceptions.InvalidParamException;
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 import com.project.e_commerce.models.ProductImage;
-import com.project.e_commerce.repositories.ProductImageRepository;
 import com.project.e_commerce.services.product.ProductService;
 import com.project.e_commerce.services.product.valiadation.ProductValidationService;
 import com.project.e_commerce.services.product_image.storage.IProductImageStorageService;

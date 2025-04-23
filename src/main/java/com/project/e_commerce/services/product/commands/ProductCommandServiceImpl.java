@@ -5,7 +5,7 @@ import com.project.e_commerce.dtos.product.ProductImageDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.exceptions.InvalidParamException;
 import com.project.e_commerce.models.Category;
-import com.project.e_commerce.models.Product;
+import com.project.e_commerce.models.product.Product;
 import com.project.e_commerce.models.ProductImage;
 import com.project.e_commerce.repositories.CategoryRepository;
 import com.project.e_commerce.repositories.ProductImageRepository;
@@ -13,16 +13,10 @@ import com.project.e_commerce.repositories.ProductRepository;
 import com.project.e_commerce.services.product.mappers.IProductMapperService;
 import com.project.e_commerce.services.product.valiadation.ProductValidationService;
 import com.project.e_commerce.services.product_image.commands.IProductImageCommandService;
-import com.project.e_commerce.services.product_image.storage.IProductImageStorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
