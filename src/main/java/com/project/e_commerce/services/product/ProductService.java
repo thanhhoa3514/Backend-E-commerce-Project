@@ -19,6 +19,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class ProductService implements IProductService {
@@ -42,9 +44,10 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
+    public Page<ProductResponse> getAllProducts(String keyword,
+                                                Long categoryId,PageRequest pageRequest) {
 
-        return productQueryService.getAllProducts(pageRequest);
+        return productQueryService.getAllProducts(keyword, categoryId,pageRequest);
     }
 
     @Override
@@ -74,18 +77,22 @@ public class ProductService implements IProductService {
         return productCommandService.createProductImage(productId, productImageDTO);
     }
 
-    @Cacheable(value = "productSearch",
-            key = "#categoryId + '_' + #minPrice + '_' + #maxPrice + '_' + #keyword + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + #pageable.sort")
-    public Page<ProductResponse> searchProducts(
-            Long categoryId,
-            Double minPrice,
-            Double maxPrice,
-            String keyword,
-            Pageable pageable) {
 
-        Page<Product> products = productRepository.searchProducts(
-                categoryId, minPrice, maxPrice, keyword, pageable);
+//    public Page<ProductResponse> searchProducts(
+//            Long categoryId,
+//            Double minPrice,
+//            Double maxPrice,
+//            String keyword,
+//            Pageable pageable) {
+//
+//        Page<Product> products = productRepository.searchProducts(
+//                categoryId, keyword,pageable);
+//
+//        return productMapperService.mapToProductResponsePage(products);
+//    }
 
-        return productMapperService.mapToProductResponsePage(products);
+    @Override
+    public List<Product> findProductsByIds(List<Long> productIds) {
+        return productQueryService.findProductsByIds(productIds);
     }
 }
