@@ -7,6 +7,9 @@ import com.project.e_commerce.repositories.UserRepository;
 import com.project.e_commerce.responses.OrderResponse;
 import com.project.e_commerce.services.order.mappers.IOrderMapperService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,5 +38,9 @@ public class OrderQueryServiceImpl implements  IOrderQueryService {
         return orders.stream()
                 .map(orderMapperService::mapToOrderResponse)
                 .collect(Collectors.toList());
+    }
+    @Override
+    public Page<Order> getOrdersByKeyword(String keyword, Pageable pageable) {
+        return orderRepository.findByKeyword(keyword, pageable);
     }
 }

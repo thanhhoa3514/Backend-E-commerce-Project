@@ -66,5 +66,8 @@ public class OrderService implements  IOrderService{
     public void updateOrderStatus(long orderId, String status) {
         orderCommandService.updateOrderStatus(orderId, status);
     }
-
+    @Override
+    public Page<Order> getOrdersByKeyword(String keyword, Pageable pageable) {
+        return orderRepository.findByKeyword(keyword, pageable);
+    }
 }
