@@ -52,7 +52,7 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.project.e_commerce.models,com.project.e_commerce.dtos");
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.project.e_commerce.models,com.project.e_commerce.dtos,com.project.e_commerce.dtos.events");
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
