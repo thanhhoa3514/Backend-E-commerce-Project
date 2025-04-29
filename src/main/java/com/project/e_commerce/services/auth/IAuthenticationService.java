@@ -13,4 +13,5 @@ public interface IAuthenticationService {
     Map<String, String> login(UserLoginDTO loginDTO, HttpServletRequest request);
     void logout(String token);
     Map<String, String> refreshToken(String refreshToken) throws DataNotFoundException;
+    boolean updatePassword(String email, String newPassword);
 }
