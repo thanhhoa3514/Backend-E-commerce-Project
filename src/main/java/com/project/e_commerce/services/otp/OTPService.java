@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import org.springframework.stereotype.Service;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
@@ -29,15 +30,37 @@ public class OTPService {
         return otp;
     }
 
-    public boolean validateOtp(String email, String otp) {
-        String storedOtp = redisTemplate.opsForValue().get("OTP:" + email);
+    public boolean validateOtp(String email, String otp, OTPType type) {
+        String redisKey = "OTP:" + email + ":" + type;
+        String storedOtp = redisTemplate.opsForValue().get(redisKey);
+        
         if (storedOtp != null && storedOtp.equals(otp)) {
-            redisTemplate.delete("OTP:" + email); // Xóa OTP sau khi sử dụng
+            redisTemplate.delete(redisKey); // Xóa OTP sau khi sử dụng
             return true;
         }
         return false;
     }
+    
     public boolean verifyOTP(String email, String otp, OTPType type) {
-        return validateOtp(email, otp);
+        return validateOtp(email, otp, type);
+    }
+    
+    public String createPasswordResetToken(String email) {
+        String token = UUID.randomUUID().toString();
+        redisTemplate.opsForValue().set(
+                "RESET_TOKEN:" + token,
+                email,
+                15, // Thời gian sống 15 phút
+                TimeUnit.MINUTES
+        );
+        return token;
+    }
+    
+    public String getEmailFromResetToken(String token) {
+        return redisTemplate.opsForValue().get("RESET_TOKEN:" + token);
+    }
+    
+    public void invalidateResetToken(String token) {
+        redisTemplate.delete("RESET_TOKEN:" + token);
     }
 }
