@@ -30,6 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.project.e_commerce.enums.OTPType;
+import com.project.e_commerce.services.otp.OTPService;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -42,6 +45,7 @@ public class AuthenticationServiceImpl implements  IAuthenticationService {
     private final PasswordValidationService passwordValidationService;
     private final AccountLockoutService accountLockoutService;
     private final ITokenBlacklistService tokenBlacklistService;
+    private final OTPService otpService;
 
 
     @Override
@@ -145,5 +149,31 @@ public class AuthenticationServiceImpl implements  IAuthenticationService {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", newAccessToken);
         return tokens;
+    }
+
+    @Override
+    public boolean updatePassword(String email, String newPassword) {
+        // Validate password strength
+        List<String> passwordErrors = passwordValidationService.validatePassword(newPassword);
+        if (!passwordErrors.isEmpty()) {
+            log.warn("Password does not meet security requirements for email: {}", email);
+            return false;
+        }
+        
+        // Find user by email
+        User user = userRepository.findByEmail(email)
+                .orElse(null);
+        
+        if (user == null) {
+            log.warn("Failed to reset password: User not found with email: {}", email);
+            return false;
+        }
+        
+        // Update password
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        
+        log.info("Password updated successfully for user: {}", email);
+        return true;
     }
 }
