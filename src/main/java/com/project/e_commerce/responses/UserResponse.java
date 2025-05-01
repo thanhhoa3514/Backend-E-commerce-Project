@@ -1,6 +1,8 @@
 package com.project.e_commerce.responses;
 
 
+import com.project.e_commerce.models.Role;
+import com.project.e_commerce.models.user.User;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -20,7 +22,19 @@ public class UserResponse {
     private LocalDate dateOfBirth;
     private Long roleId;
     private boolean isActive;
-    private String roleName; // Thêm tên role để frontend dễ sử dụng
+    private Role role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public static UserResponse fromUser(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
+                .isActive(user.getIsActive())
+                .dateOfBirth(user.getDateOfBirth())
+                .role(user.getRole())
+                .build();
+    }
 }
