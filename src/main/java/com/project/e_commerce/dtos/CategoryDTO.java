@@ -9,6 +9,8 @@ import lombok.*;
 public class CategoryDTO {
     @NotEmpty(message = "Category Name Can not be empty")
     private String name;
+    
+    private String description;
 
 //    public @NotEmpty(message = "Category Name Can not be empty") String getName() {
 //        return name;

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="AUTH_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/auth.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/auth.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- JSON format cho ELK integration -->
+        </encoder>
+    </appender>
+
+    <logger name="client-auth" level="INFO" additivity="false">
+        <appender-ref ref="AUTH_FILE" />
+    </logger>
+
+    <logger name="admin-auth" level="INFO" additivity="false">
+        <appender-ref ref="AUTH_FILE" />
+    </logger>
+
+    <logger name="permission" level="INFO" additivity="false">
+        <appender-ref ref="AUTH_FILE" />
+    </logger>
+</configuration>
