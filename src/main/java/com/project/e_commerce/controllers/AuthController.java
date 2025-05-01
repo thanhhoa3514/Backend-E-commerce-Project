@@ -1,5 +1,6 @@
 package com.project.e_commerce.controllers;
 
+import com.project.e_commerce.components.LocalizationUtils;
 import com.project.e_commerce.dtos.TokenRefreshRequestDTO;
 import com.project.e_commerce.dtos.user.ResetPasswordDTO;
 import com.project.e_commerce.dtos.user.UserLoginDTO;
@@ -10,10 +11,12 @@ import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.user.User;
 import com.project.e_commerce.responses.AuthResponse;
 
+import com.project.e_commerce.responses.UserResponse;
 import com.project.e_commerce.security.CustomOAuth2User;
 import com.project.e_commerce.services.token.TokenBlacklistServiceImpl;
 import com.project.e_commerce.services.auth.AuthenticationServiceImpl;
 import com.project.e_commerce.services.jwt.IJwtService;
+import com.project.e_commerce.utils.MessageKeys;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +40,7 @@ import java.util.Map;
 public class AuthController {
 
         private final AuthenticationServiceImpl authenticationServiceImpl;
-
+        private final LocalizationUtils localizationUtils;
         private final TokenBlacklistServiceImpl tokenBlacklistServiceImpl;
         private final IJwtService jwtService;
 
@@ -69,10 +72,11 @@ public class AuthController {
                         HttpServletRequest request) {
                 User registeredUser = authenticationServiceImpl.register(userRegisterDTO, request);
                 log.info("User registered: {}", userRegisterDTO.getPhoneNumber());
-                return ResponseEntity.ok(AuthResponse.builder()
-                                .message("Đăng ký thành công. Vui lòng đăng nhập.")
+                return ResponseEntity.ok(
+                        AuthResponse.builder()
+                                .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_SUCCESSFULLY))
                                 .status(HttpStatus.CREATED)
-                                .data(Map.of("phoneNumber", registeredUser.getPhoneNumber()))
+                                .data(UserResponse.fromUser(registeredUser))
                                 .build());
         }
 
