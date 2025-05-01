@@ -24,7 +24,6 @@ import java.util.List;
 @Service
 public class ProductService implements IProductService {
 
-
     private final IProductCommandService productCommandService;
     private final IProductQueryService productQueryService;
     private final ProductRepository productRepository;
@@ -38,15 +37,13 @@ public class ProductService implements IProductService {
     @Override
     @Cacheable(value = "products", key = "#productId")
     public Product getProductById(long productId) {
-
         return productQueryService.getProductById(productId);
     }
 
     @Override
     public Page<ProductResponse> getAllProducts(String keyword,
-                                                Long categoryId,PageRequest pageRequest) {
-
-        return productQueryService.getAllProducts(keyword, categoryId,pageRequest);
+                                                Long categoryId, PageRequest pageRequest) {
+        return productQueryService.getAllProducts(keyword, categoryId, pageRequest);
     }
 
     @Override
@@ -63,32 +60,10 @@ public class ProductService implements IProductService {
 
     @Override
     public boolean exitsByName(String nameProduct) {
-
         return productQueryService.existsByName(nameProduct);
-
-    }
-
-    @Override
-    public ProductImage createImagesForProduct(
-            Long productId,
-            ProductImageDTO productImageDTO) throws InvalidParamException {
-
-        return productCommandService.createProductImage(productId, productImageDTO);
     }
 
 
-//    public Page<ProductResponse> searchProducts(
-//            Long categoryId,
-//            Double minPrice,
-//            Double maxPrice,
-//            String keyword,
-//            Pageable pageable) {
-//
-//        Page<Product> products = productRepository.searchProducts(
-//                categoryId, keyword,pageable);
-//
-//        return productMapperService.mapToProductResponsePage(products);
-//    }
 
     @Override
     public List<Product> findProductsByIds(List<Long> productIds) {

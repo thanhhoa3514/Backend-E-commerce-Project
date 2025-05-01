@@ -23,7 +23,5 @@ public interface IProductService{
     void deleteProduct(long productId);
     List<Product> findProductsByIds(List<Long> productIds);
     boolean exitsByName(String nameProduct);
-    ProductImage createImagesForProduct(
-            Long productId,
-            ProductImageDTO productImageDTO) throws InvalidParamException;
+
 }

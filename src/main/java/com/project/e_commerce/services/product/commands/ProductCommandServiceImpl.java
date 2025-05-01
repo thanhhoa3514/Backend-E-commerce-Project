@@ -28,7 +28,6 @@ public class ProductCommandServiceImpl implements IProductCommandService {
     private final ProductImageRepository productImageRepository;
     private final IProductMapperService productMapperService;
     private final ProductValidationService productValidationService;
-
     private final IProductImageCommandService productImageCommandService;
 
     @Override
@@ -84,17 +83,7 @@ public class ProductCommandServiceImpl implements IProductCommandService {
     {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new DataNotFoundException("Cannot find product with id: " + productId));
-
-        int imageCount = productImageRepository.findByProductId(productId).size();
-        if (imageCount >= ProductImage.MAXIMUM_IMAGES_PER_ONE) {
-            throw new InvalidParamException("Each product can only have up to 5 images.");
-        }
-
-        ProductImage productImage = ProductImage.builder()
-                .product(product)
-                .imageUrl(productImageDTO.getImageUrl())
-                .build();
-
-        return productImageRepository.save(productImage);
+        
+        return productImageCommandService.createProductImage(product, productImageDTO.getImageUrl());
     }
 }

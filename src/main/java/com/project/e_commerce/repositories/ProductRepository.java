@@ -18,7 +18,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Override
     @NonNull
     Page<Product> findAll(@NonNull Pageable pageable);
-    List<Product> findByCategory(Category category);
+    List<Product> findByCategoryId(Category category);
 //    @Query("SELECT p FROM Product p WHERE " +
 //            "(:categoryId IS NULL OR p.categoryId.id = :categoryId) AND " +
 //            "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
@@ -27,7 +27,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 //            "LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')))")
 
     @Query("SELECT p FROM Product p WHERE " +
-            "(:categoryId IS NULL OR :categoryId = 0 OR p.categoryId = :categoryId) " +
+            "(:categoryId IS NULL OR :categoryId = 0 OR p.categoryId.id = :categoryId) " +
             "AND (:keyword IS NULL OR :keyword = '' OR p.name LIKE %:keyword% OR p.description LIKE %:keyword%)")
     Page<Product> searchProducts
             (@Param("categoryId") Long categoryId,
