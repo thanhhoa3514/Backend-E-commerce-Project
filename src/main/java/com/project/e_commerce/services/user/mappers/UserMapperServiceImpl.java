@@ -35,7 +35,7 @@ public class UserMapperServiceImpl implements IUserMapperService {
                 .email(user.getEmail())
                 .dateOfBirth(user.getDateOfBirth())
                 .roleId(user.getRole().getId())
-                .roleName(user.getRole().getName())
+
                 .isActive(user.getIsActive())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
