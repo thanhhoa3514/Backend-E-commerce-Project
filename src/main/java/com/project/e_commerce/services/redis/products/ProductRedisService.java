@@ -38,7 +38,7 @@ public class ProductRedisService implements  IProductRedisService {
     @Override
     public void clearCache() {
         assert redisTemplate.getConnectionFactory() != null;
-        redisTemplate.getConnectionFactory().getConnection().flushAll();
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 
     @Override
