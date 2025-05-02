@@ -12,6 +12,7 @@ public class CategoryMapperServiceImpl implements  ICategoryMapperService {
     public Category mapToCategory(CategoryDTO categoryDTO) {
         return Category.builder()
                 .name(categoryDTO.getName())
+                .description(categoryDTO.getDescription())
                 .build();
     }
 
@@ -20,11 +21,15 @@ public class CategoryMapperServiceImpl implements  ICategoryMapperService {
         return CategoryResponse.builder()
                 .id(category.getId())
                 .name(category.getName())
+                .description(category.getDescription())
+                .createdAt(category.getCreatedAt())
+                .updatedAt(category.getUpdatedAt())
                 .build();
     }
 
     @Override
     public void updateCategoryFromDTO(Category category, CategoryDTO categoryDTO) {
         category.setName(categoryDTO.getName());
+        category.setDescription(categoryDTO.getDescription());
     }
 }
