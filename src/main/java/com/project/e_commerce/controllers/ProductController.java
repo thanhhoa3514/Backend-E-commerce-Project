@@ -6,9 +6,9 @@ import com.project.e_commerce.dtos.product.ProductDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.exceptions.InvalidParamException;
 import com.project.e_commerce.models.product.Product;
-import com.project.e_commerce.responses.AuthResponse;
 import com.project.e_commerce.responses.ProductListResponse;
 import com.project.e_commerce.responses.ProductResponse;
+import com.project.e_commerce.responses.ResponseObject;
 import com.project.e_commerce.services.product.IProductService;
 
 
@@ -54,7 +54,7 @@ public class ProductController {
         description = "Create a new product with the provided information. Requires ADMIN role.",
         security = { @SecurityRequirement(name = "bearer-key") }
     )
-    public ResponseEntity<AuthResponse> createProduct(
+    public ResponseEntity<ResponseObject> createProduct(
             @Valid @RequestBody com.project.e_commerce.dtos.product.ProductDTO productDTO,
             BindingResult result
     ) {
@@ -65,7 +65,7 @@ public class ProductController {
                     error -> localizationUtils.getLocalizedMessage(error.getDefaultMessage())
                 ));
             
-            return ResponseEntity.badRequest().body(AuthResponse.builder()
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
                     .message("Validation errors")
                     .status(HttpStatus.BAD_REQUEST)
                     .data(errorMap)
@@ -74,13 +74,13 @@ public class ProductController {
         
         try {
             Product newProduct = productService.createProduct(productDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(AuthResponse.builder()
+            return ResponseEntity.status(HttpStatus.CREATED).body(ResponseObject.builder()
                     .message("Create new product successfully")
                     .status(HttpStatus.CREATED)
                     .data(newProduct)
                     .build());
         } catch (InvalidParamException ex) {
-            return ResponseEntity.badRequest().body(AuthResponse.builder()
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
                     .message(ex.getMessage())
                     .status(HttpStatus.BAD_REQUEST)
                     .data(null)
@@ -122,7 +122,7 @@ public class ProductController {
 
     @GetMapping("")
     @Operation(summary = "Get products", description = "Get products with filtering and pagination")
-    public ResponseEntity<ProductListResponse> getProducts(
+    public ResponseEntity<ResponseObject> getProducts(
             @RequestParam(defaultValue = "", required = false) String keyword,
             @RequestParam(defaultValue = "0", name = "category_id", required = false) Long categoryId,
             @RequestParam(defaultValue = "0", required = false) int page,
@@ -159,40 +159,48 @@ public class ProductController {
             Page<ProductResponse> productPage=productService.getAllProducts(keyword, categoryId,pageRequest);
 
             List<ProductResponse> productResponseLists=productPage.getContent();
-            return ResponseEntity.ok(ProductListResponse.
+            ProductListResponse productListResponse = ProductListResponse.
                     builder()
                     .productList(productResponseLists)
                     .totalPages(totalPages)
+                    .build();
+                    
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .status(HttpStatus.OK)
+                    .message("Get products successfully")
+                    .data(productListResponse)
                     .build());
         } catch (Exception ex) {
             log.error("Error getting products: {}", ex.getMessage(), ex);
-            return ResponseEntity.ok(ProductListResponse.
-                    builder()
-                    .productList(null)
-                    .totalPages(0)
-                    .build());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                ResponseObject.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .message("Error getting products: " + ex.getMessage())
+                    .data(null)
+                    .build()
+            );
         }
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get product by ID", description = "Get detailed information of a product by its ID")
-    public ResponseEntity<AuthResponse> getProductById(@PathVariable("id") Long productId) {
+    public ResponseEntity<ResponseObject> getProductById(@PathVariable("id") Long productId) {
         try {
             Product existingProduct = productService.getProductById(productId);
-            return ResponseEntity.ok(AuthResponse.builder()
+            return ResponseEntity.ok(ResponseObject.builder()
                     .data(ProductResponse.from(existingProduct))
                     .message("Get product details successfully")
                     .status(HttpStatus.OK)
                     .build());
         } catch (DataNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(AuthResponse.builder()
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder()
                     .message(ex.getMessage())
                     .status(HttpStatus.NOT_FOUND)
                     .data(null)
                     .build());
         } catch (Exception ex) {
             log.error("Error getting product with ID {}: {}", productId, ex.getMessage(), ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthResponse.builder()
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
                     .message("Error retrieving product")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .data(null)
@@ -202,7 +210,7 @@ public class ProductController {
 
     @GetMapping("/by-ids")
     @Operation(summary = "Get products by IDs", description = "Get multiple products by their IDs")
-    public ResponseEntity<AuthResponse> getProductsByIds(@RequestParam("ids") String ids) {
+    public ResponseEntity<ResponseObject> getProductsByIds(@RequestParam("ids") String ids) {
         try {
             // Split the ids string into a list of Long
             List<Long> productIds = Arrays.stream(ids.split(","))
@@ -214,20 +222,20 @@ public class ProductController {
                     .map(ProductResponse::from)
                     .collect(Collectors.toList());
                     
-            return ResponseEntity.ok(AuthResponse.builder()
+            return ResponseEntity.ok(ResponseObject.builder()
                     .data(productResponses)
                     .message("Get products successfully")
                     .status(HttpStatus.OK)
                     .build());
         } catch (NumberFormatException ex) {
-            return ResponseEntity.badRequest().body(AuthResponse.builder()
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
                     .message("Invalid product IDs format")
                     .status(HttpStatus.BAD_REQUEST)
                     .data(null)
                     .build());
         } catch (Exception ex) {
             log.error("Error getting products by IDs: {}", ex.getMessage(), ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthResponse.builder()
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
                     .message("Error retrieving products")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .data(null)
@@ -242,26 +250,26 @@ public class ProductController {
         description = "Delete a product by its ID. Requires ADMIN role.",
         security = { @SecurityRequirement(name = "bearer-key") }
     )
-    public ResponseEntity<AuthResponse> deleteProduct(@PathVariable long id) {
+    public ResponseEntity<ResponseObject> deleteProduct(@PathVariable long id) {
         try {
             productService.deleteProduct(id);
             // Clear Redis cache to reflect changes
             productRedisService.clearCache();
             
-            return ResponseEntity.ok(AuthResponse.builder()
+            return ResponseEntity.ok(ResponseObject.builder()
                     .data(null)
                     .message(String.format("Product with id = %d deleted successfully", id))
                     .status(HttpStatus.OK)
                     .build());
         } catch (DataNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(AuthResponse.builder()
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder()
                     .message(ex.getMessage())
                     .status(HttpStatus.NOT_FOUND)
                     .data(null)
                     .build());
         } catch (Exception ex) {
             log.error("Error deleting product with ID {}: {}", id, ex.getMessage(), ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthResponse.builder()
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
                     .message("Error deleting product")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .data(null)
@@ -276,7 +284,7 @@ public class ProductController {
         description = "Update a product by its ID. Requires ADMIN role.",
         security = { @SecurityRequirement(name = "bearer-key") }
     )
-    public ResponseEntity<AuthResponse> updateProduct(
+    public ResponseEntity<ResponseObject> updateProduct(
             @PathVariable long id,
             @Valid @RequestBody ProductDTO productDTO,
             BindingResult result) {
@@ -288,7 +296,7 @@ public class ProductController {
                     error -> localizationUtils.getLocalizedMessage(error.getDefaultMessage())
                 ));
             
-            return ResponseEntity.badRequest().body(AuthResponse.builder()
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
                     .message("Validation errors")
                     .status(HttpStatus.BAD_REQUEST)
                     .data(errorMap)
@@ -300,20 +308,20 @@ public class ProductController {
             // Clear Redis cache to reflect changes
             productRedisService.clearCache();
             
-            return ResponseEntity.ok(AuthResponse.builder()
+            return ResponseEntity.ok(ResponseObject.builder()
                     .data(ProductResponse.from(updatedProduct))
                     .message("Update product successfully")
                     .status(HttpStatus.OK)
                     .build());
         } catch (DataNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(AuthResponse.builder()
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseObject.builder()
                     .message(ex.getMessage())
                     .status(HttpStatus.NOT_FOUND)
                     .data(null)
                     .build());
         } catch (Exception ex) {
             log.error("Error updating product with ID {}: {}", id, ex.getMessage(), ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AuthResponse.builder()
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
                     .message("Error updating product")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .data(null)
