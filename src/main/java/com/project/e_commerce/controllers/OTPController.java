@@ -8,6 +8,7 @@ import com.project.e_commerce.enums.OTPType;
 import com.project.e_commerce.responses.ApiResponse;
 import com.project.e_commerce.services.auth.IAuthenticationService;
 import com.project.e_commerce.services.otp.OTPService;
+import com.project.e_commerce.utils.MessageKeys;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,15 +39,17 @@ public class OTPController {
     
     @PostMapping("/verify")
     public ResponseEntity<ApiResponse> verifyOTP(@Valid @RequestBody OTPVerifyRequestDTO request) {
-        boolean verified = otpService.verifyOTP(request.getEmail(), request.getCode(), request.getType());
+        // Lấy email từ OTP và type
+        String email = otpService.verifyOTPWithoutEmail(request.getCode(), request.getType());
         
-        if (verified) {
-            // If OTP verification is successful, generate a reset token for password reset
+        if (email != null) {
+            // Nếu xác thực thành công và là yêu cầu đặt lại mật khẩu, tạo token
             if (request.getType() == OTPType.PASSWORD_RESET) {
-                String resetToken = otpService.createPasswordResetToken(request.getEmail());
+                String resetToken = otpService.createPasswordResetToken(email);
                 
                 Map<String, String> responseData = new HashMap<>();
                 responseData.put("resetToken", resetToken);
+                responseData.put("email", email);
                 
                 return ResponseEntity.ok(
                         ApiResponse.builder()
@@ -57,10 +60,15 @@ public class OTPController {
                 );
             }
             
+            // Trả về email cho các loại OTP khác
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("email", email);
+            
             return ResponseEntity.ok(
                     ApiResponse.builder()
                             .status(HttpStatus.OK.value())
                             .message("OTP verified successfully")
+                            .data(responseData)
                             .build()
             );
         } else {
