@@ -5,9 +5,11 @@ import com.project.e_commerce.dtos.cart.CartItemDTO;
 import com.project.e_commerce.dtos.cart.CartResponseDTO;
 import com.project.e_commerce.exceptions.DataNotFoundException;
 import com.project.e_commerce.models.user.User;
+import com.project.e_commerce.responses.ResponseObject;
 import com.project.e_commerce.services.cart.ICartService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -20,46 +22,79 @@ public class CartController {
     private final ICartService cartService;
 
     @GetMapping
-    public ResponseEntity<CartResponseDTO> getCart(Authentication authentication) throws DataNotFoundException {
+    public ResponseEntity<ResponseObject> getCart(Authentication authentication) throws DataNotFoundException {
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(cartService.getCartByUser(user.getId()));
+        CartResponseDTO cart = cartService.getCartByUser(user.getId());
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message("Get cart successfully")
+                        .data(cart)
+                        .build()
+        );
     }
 
 
     @PostMapping("/add")
-    public ResponseEntity<CartResponseDTO> addItemToCart(
+    public ResponseEntity<ResponseObject> addItemToCart(
             Authentication authentication,
             @RequestBody @Valid CartItemDTO cartItemDTO) throws DataNotFoundException {
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(cartService.addItemToCart(user.getId(), cartItemDTO));
+        CartResponseDTO cart = cartService.addItemToCart(user.getId(), cartItemDTO);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message("Item added to cart successfully")
+                        .data(cart)
+                        .build()
+        );
     }
 
 
     @PutMapping("/items/{itemId}")
-    public ResponseEntity<CartResponseDTO> updateCartItem(
+    public ResponseEntity<ResponseObject> updateCartItem(
             Authentication authentication,
             @PathVariable Long cartItemId,
-
             @RequestBody @Valid CartItemDTO cartItemDTO) throws DataNotFoundException {
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(cartService.updateCartItem(cartItemId, cartItemDTO, user.getId()));
+        CartResponseDTO cart = cartService.updateCartItem(cartItemId, cartItemDTO, user.getId());
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message("Cart item updated successfully")
+                        .data(cart)
+                        .build()
+        );
     }
 
     @DeleteMapping("/items/{cartItemId}")
-    public ResponseEntity<CartResponseDTO> removeItemFromCart(
+    public ResponseEntity<ResponseObject> removeItemFromCart(
             Authentication authentication,
             @PathVariable Long cartItemId) throws DataNotFoundException {
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(cartService.removeItemFromCart(cartItemId, user.getId()));
+        CartResponseDTO cart = cartService.removeItemFromCart(cartItemId, user.getId());
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message("Item removed from cart successfully")
+                        .data(cart)
+                        .build()
+        );
     }
 
     @DeleteMapping("/clear")
-    public ResponseEntity<CartResponseDTO> clearCart(Authentication authentication) throws DataNotFoundException {
+    public ResponseEntity<ResponseObject> clearCart(Authentication authentication) throws DataNotFoundException {
         User user = (User) authentication.getPrincipal();
 
         // Clear cart
-        CartResponseDTO response = cartService.clearCart(user.getId());
+        CartResponseDTO cart = cartService.clearCart(user.getId());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK)
+                        .message("Cart cleared successfully")
+                        .data(cart)
+                        .build()
+        );
     }
 }
