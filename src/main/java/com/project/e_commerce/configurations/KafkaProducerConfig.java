@@ -4,14 +4,16 @@ package com.project.e_commerce.configurations;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.project.e_commerce.dtos.events.EmailEvent;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.CommonErrorHandler;
@@ -22,6 +24,8 @@ import org.springframework.util.backoff.FixedBackOff;
 
 @Configuration
 public class KafkaProducerConfig {
+    private static final Logger logger = LoggerFactory.getLogger(KafkaProducerConfig.class);
+    
     @Value("${spring.kafka.bootstrap-servers:localhost:9092}")
     private String bootstrapServers;
 
@@ -38,11 +42,11 @@ public class KafkaProducerConfig {
     */
 
     @Bean
-    public CommonErrorHandler errorHandler(KafkaOperations<Object, Object> template) {
-        return new DefaultErrorHandler(
-                new DeadLetterPublishingRecoverer(template), 
-                new FixedBackOff(retryInterval, retryAttempts));
-    }
+public CommonErrorHandler errorHandler(KafkaTemplate<String, Object> jsonKafkaTemplate) {
+    return new DefaultErrorHandler(
+            new DeadLetterPublishingRecoverer(jsonKafkaTemplate), 
+            new FixedBackOff(retryInterval, retryAttempts));
+}
 
     @Bean
     public ProducerFactory<String, String> stringProducerFactory() {
@@ -85,5 +89,19 @@ public class KafkaProducerConfig {
     @Bean
     public NewTopic getCategoryByIdTopic() {
         return new NewTopic("get-category-by-id", 1, (short) 1);
+    }
+
+
+    @Bean
+    public KafkaTemplate<String, EmailEvent> emailEventKafkaTemplate() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        DefaultKafkaProducerFactory<String, EmailEvent> producerFactory =
+                new DefaultKafkaProducerFactory<>(props);
+
+        return new KafkaTemplate<>(producerFactory);
     }
 }
