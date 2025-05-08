@@ -20,11 +20,31 @@ spring:
     redis:
       time-to-live: 3600000
       cache-null-values: false
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      timeout: 60000
+      use-redis-cache: true
   servlet:
     multipart:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
+  mail:
+    mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 
   messages:
     basename: i18n/messages
@@ -36,9 +56,10 @@ spring:
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
       timeout: 60000
+      use-redis-cache: true
 
   kafka:
-    bootstrap-servers: ${KAFKA_PORT}
+    bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -49,42 +70,47 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: com.project.e_commerce.model,com.project.e_commerce.dtos
+  autoconfigure:
+    exclude:
+      - io.awspring.cloud.autoconfigure.ses.SesAutoConfiguration
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: profile,email
+            redirect-uri: "{baseUrl}/api/v1/login/oauth2/code/google"
+#          facebook:
+            #client-id: ${FACEBOOK_CLIENT_ID}
+            #client-secret: ${FACEBOOK_CLIENT_SECRET}
+#            scope: email,public_profile
+#            redirect-uri: "{baseUrl}/api/v1/login/oauth2/code/facebook"
+        provider:
+          facebook:
+            user-info-uri: https://graph.facebook.com/me?fields=id,name,email
+      
 api:
   prefix: /api/v1
 stripe:
   secret:
-    key: ${STRIPE_SECRET_KEY}
-  public:
-    key: ${STRIPE_PUBLIC_KEY}
-  webhook:
-    secret: ${STRIPE_WEBHOOK_SECRET}
+    key: ${STRIPE_API}
+#  public:
+#    key: ${STRIPE_PUBLIC_KEY}
+#  webhook:
+#    secret: ${STRIPE_WEBHOOK_SECRET}
   currency:
-    unit: usd,vnd
+    unit: usd
   payment:
     method: card,bank_transfer
-    currency: usd,vnd
+    currency: usd
 
 security:
   account:
     max-failed-attempts: 5
     lockout-duration-minutes: 30
 
-  oauth2:
-    client:
-      registration:
-        google:
-          client-id: ${GOOGLE_CLIENT_ID}
-          client-secret: ${GOOGLE_CLIENT_SECRET}
-          scope: profile,email
-          redirect-uri: "{baseUrl}/api/v1/login/oauth2/code/google"
-        facebook:
-          client-id: ${FACEBOOK_CLIENT_ID}
-          client-secret: ${FACEBOOK_CLIENT_SECRET}
-          scope: email,public_profile
-          redirect-uri: "{baseUrl}/api/v1/login/oauth2/code/facebook"
-      provider:
-        facebook:
-          user-info-uri: https://graph.facebook.com/me?fields=id,name,email
 jwt:
   expiration: ${JWT_EXPIRATION} # seconds
   secretKey: ${JWT_SECRET_KEY}
@@ -104,4 +130,21 @@ management:
     metrics:
       export:
         enabled: true
+
+# AWS Configuration
+# cloud:
+#   aws:
+#     region:
+#       static: us-east-1
+#       auto: false
+#     stack:
+#       auto: false
+#     credentials:
+#       access-key: ${AWS_ACCESS_KEY}
+#       secret-key: ${AWS_SECRET_KEY}
+
+# Comment this exclusion to use SES configuration
+#  autoconfigure:
+#    exclude:
+#      - io.awspring.cloud.autoconfigure.ses.SesAutoConfiguration
 
