@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import org.springframework.stereotype.Service;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -39,6 +40,35 @@ public class OTPService {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Xác thực OTP chỉ bằng code và type, không cần email
+     * @param code Mã OTP
+     * @param type Loại OTP
+     * @return Địa chỉ email nếu xác thực thành công, null nếu thất bại
+     */
+    public String verifyOTPWithoutEmail(String code, OTPType type) {
+        // Lấy tất cả các key có pattern OTP:*:type
+        String keyPattern = "OTP:*:" + type;
+        Set<String> keys = redisTemplate.keys(keyPattern);
+        
+        if (keys != null) {
+            for (String key : keys) {
+                String storedOtp = redisTemplate.opsForValue().get(key);
+                if (storedOtp != null && storedOtp.equals(code)) {
+                    // Trích xuất email từ key (format: OTP:email:type)
+                    String[] parts = key.split(":");
+                    if (parts.length >= 2) {
+                        String email = parts[1];
+                        // Xóa OTP sau khi sử dụng
+                        redisTemplate.delete(key);
+                        return email;
+                    }
+                }
+            }
+        }
+        return null;
     }
     
     public boolean verifyOTP(String email, String otp, OTPType type) {
