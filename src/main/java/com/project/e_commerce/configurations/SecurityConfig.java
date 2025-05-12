@@ -1,5 +1,6 @@
 package com.project.e_commerce.configurations;
 
+import com.project.e_commerce.components.OAuth2AuthenticationSuccessHandler;
 import com.project.e_commerce.filters.JwtTokenFilter;
 import com.project.e_commerce.filters.RateLimitingFilter;
 import com.project.e_commerce.services.auth.oauth2.CustomOAuth2UserService;
@@ -30,6 +31,7 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final RateLimitingFilter rateLimitingFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,9 +42,10 @@ public class SecurityConfig {
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+                .requestMatchers("/api/v1/login/oauth2/code/**", "/api/v1/auth/success", "/login/oauth2/code/**").permitAll()
 
                     // authorization with oauth2
-                    .requestMatchers(HttpMethod.POST, "/oauth2/**").permitAll()
+                    .requestMatchers("/oauth2/**", "/login", "/oauth2/authorization/**").permitAll()
                     .requestMatchers("/api/v1/auth/validate-token").authenticated()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // Products: GET for all, POST/PUT/DELETE for admin only
@@ -70,17 +73,20 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
-                        .defaultSuccessUrl("/api/v1/auth/success", true)
-                        .failureUrl("/login?error=true")
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                        .failureHandler((request, response, exception) -> {
+                            // Log authentication failure
+                            System.out.println("OAuth2 login failed: " + exception.getMessage());
+                            response.sendRedirect("/api/v1/auth/login?error=true");
+                        })
                 )
 
                 .cors(cors -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://127.0.0.1:4200")); 
+                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://127.0.0.1:4200"));
                     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                     configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Auth-Token", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
                     configuration.setExposedHeaders(List.of("X-Auth-Token"));
@@ -92,9 +98,10 @@ public class SecurityConfig {
                     cors.configurationSource(source);
                 })
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                // Use ALWAYS instead of STATELESS to maintain the session during OAuth2 flow
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
             );
-            
+
         return http.build();
     }
 }
