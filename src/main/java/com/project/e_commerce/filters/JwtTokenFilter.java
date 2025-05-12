@@ -37,6 +37,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
+        // Skip OAuth2 endpoints
+        String requestURI = request.getRequestURI();
+        if (requestURI.contains("/oauth2/") || requestURI.contains("/login/oauth2/") ||
+            requestURI.contains("/api/v1/login/oauth2/") || requestURI.contains("/api/v1/auth/success")) {
+            log.info("Skipping JWT filter for OAuth2 endpoint: {}", requestURI);
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
