@@ -47,7 +47,9 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     private boolean isAuthEndpoint(String uri) {
         return uri.contains("/api/v1/users/login") ||
                 uri.contains("/api/v1/users/register") ||
-                uri.contains("/api/v1/auth/refresh-token");
+                uri.contains("/api/v1/auth/refresh-token") ||
+                uri.contains("/api/v1/auth/login") ||
+                uri.contains("/api/v1/auth/register");
     }
 
     private String getClientIP(HttpServletRequest request) {
